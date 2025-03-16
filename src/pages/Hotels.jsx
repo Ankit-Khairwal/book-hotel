@@ -20,6 +20,16 @@ import { Link } from "react-router-dom";
 import { properties } from "../data/properties";
 import Footer from "../components/Footer";
 
+// Map category IDs to property amenities for filtering
+const categoryToPropertyMap = {
+  beach: "beachAccess",
+  mountain: "mountainView",
+  spa: "spa",
+  pool: "pool",
+  dining: "restaurant",
+  fitness: "gym",
+};
+
 // Use the properties data from our data file instead of mock data
 function Hotels() {
   const [searchParams] = useSearchParams();
@@ -51,9 +61,10 @@ function Hotels() {
   };
 
   const filterHotels = (price, amenities) => {
-    // Get the search query and location from URL parameters
+    // Get the search query, location, and category from URL parameters
     const searchQuery = searchParams.get("search")?.toLowerCase();
     const locationQuery = searchParams.get("location")?.toLowerCase();
+    const categoryQuery = searchParams.get("category");
 
     let filtered = properties.filter((hotel) => {
       // Price filter
@@ -79,7 +90,19 @@ function Hotels() {
         hotel.location.city.toLowerCase().includes(locationQuery) ||
         hotel.location.country.toLowerCase().includes(locationQuery);
 
-      return priceMatch && amenitiesMatch && searchMatch && locationMatch;
+      // Category filter
+      const categoryMatch =
+        !categoryQuery ||
+        (categoryToPropertyMap[categoryQuery] &&
+          hotel.amenities.includes(categoryToPropertyMap[categoryQuery]));
+
+      return (
+        priceMatch &&
+        amenitiesMatch &&
+        searchMatch &&
+        locationMatch &&
+        categoryMatch
+      );
     });
 
     setHotels(filtered);
@@ -100,8 +123,9 @@ function Hotels() {
     // Apply filters based on URL parameters
     const searchQuery = searchParams.get("search");
     const locationQuery = searchParams.get("location");
+    const categoryQuery = searchParams.get("category");
 
-    if (searchQuery || locationQuery) {
+    if (searchQuery || locationQuery || categoryQuery) {
       filterHotels([minPrice, maxPrice], []);
     } else {
       setHotels(initialHotels);
@@ -123,6 +147,14 @@ function Hotels() {
         {searchParams.get("search") && (
           <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
             Search results for "{searchParams.get("search")}"
+          </Typography>
+        )}
+
+        {searchParams.get("category") && (
+          <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
+            {searchParams.get("category").charAt(0).toUpperCase() +
+              searchParams.get("category").slice(1)}{" "}
+            Properties
           </Typography>
         )}
 

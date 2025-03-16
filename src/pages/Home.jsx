@@ -84,22 +84,57 @@ function Home() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [featuredProperties, setFeaturedProperties] = useState([]);
+  const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Map category IDs to property amenities or types for filtering
+  const categoryToPropertyMap = {
+    beach: "beachAccess",
+    mountain: "mountainView",
+    spa: "spa",
+    pool: "pool",
+    dining: "restaurant",
+    fitness: "gym",
+  };
+
   useEffect(() => {
-    // Simulate loading featured properties
+    // Load featured properties
     setLoading(true);
     setTimeout(() => {
       const featured = properties
         .filter((property) => property.featured)
         .slice(0, 8);
       setFeaturedProperties(featured);
+      setFilteredProperties(featured); // Initialize filtered properties with all featured properties
       setLoading(false);
     }, 1000);
   }, []);
 
+  // Filter properties when category changes
+  useEffect(() => {
+    if (selectedCategory === "all") {
+      setFilteredProperties(featuredProperties);
+    } else {
+      const amenityToFilter = categoryToPropertyMap[selectedCategory];
+      const filtered = featuredProperties.filter((property) =>
+        property.amenities.includes(amenityToFilter)
+      );
+      setFilteredProperties(filtered);
+    }
+  }, [selectedCategory, featuredProperties]);
+
   const handleCategoryChange = (event, newValue) => {
     setSelectedCategory(newValue);
+  };
+
+  const handleCategoryClick = (categoryId) => {
+    if (categoryId === "all") {
+      // Show all properties
+      setSelectedCategory("all");
+    } else {
+      // Navigate to hotels page with category filter
+      navigate(`/hotels?category=${categoryId}`);
+    }
   };
 
   const handleSearch = (e) => {
@@ -264,6 +299,7 @@ function Home() {
                   {t(`categories.${category.id}`)}
                 </Box>
               }
+              onClick={() => handleCategoryClick(category.id)}
             />
           ))}
         </Tabs>
@@ -275,9 +311,13 @@ function Home() {
             component="h2"
             sx={{ mb: 4, fontWeight: 600, color: "primary.main" }}
           >
-            {t("home.featuredProperties")}
+            {selectedCategory === "all"
+              ? t("home.featuredProperties")
+              : t(`categories.${selectedCategory}`) +
+                " " +
+                t("home.properties")}
           </Typography>
-          <PropertyGrid properties={featuredProperties} loading={loading} />
+          <PropertyGrid properties={filteredProperties} loading={loading} />
         </Box>
 
         {/* Featured Destinations */}
