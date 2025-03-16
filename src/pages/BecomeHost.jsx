@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Container,
   Grid,
@@ -21,6 +21,11 @@ import {
   FormLabel,
   Divider,
   Alert,
+  CircularProgress,
+  ImageList,
+  ImageListItem,
+  IconButton,
+  LinearProgress,
 } from "@mui/material";
 import {
   Home,
@@ -30,7 +35,12 @@ import {
   AttachMoney,
   Check,
   Upload,
+  Delete,
 } from "@mui/icons-material";
+import { storage } from "../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
+import { useAuthContext } from "../context/AuthContext";
 
 const steps = [
   "Property Type",
@@ -64,7 +74,12 @@ const amenities = [
 ];
 
 function BecomeHost() {
+  const { user } = useAuthContext();
   const [activeStep, setActiveStep] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState("");
+  const fileInputRef = useRef(null);
   const [propertyData, setPropertyData] = useState({
     type: "",
     address: "",
@@ -119,6 +134,140 @@ function BecomeHost() {
     // In a real app, you would submit the property data to the backend here
     console.log("Property data submitted:", propertyData);
     handleNext();
+  };
+
+  // Function to compress image before upload
+  const compressImage = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                // Create a new file from the blob
+                const compressedFile = new File([blob], file.name, {
+                  type: "image/jpeg",
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                reject(new Error("Canvas to Blob conversion failed"));
+              }
+            },
+            "image/jpeg",
+            0.7
+          ); // 0.7 quality gives good compression
+        };
+        img.onerror = (error) => reject(error);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleFileUpload = async (e) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    setUploadError("");
+    setUploadProgress(0);
+
+    try {
+      // Process files in batches of 3 for better performance
+      const BATCH_SIZE = 3;
+      const totalFiles = files.length;
+      let processedFiles = 0;
+      let allUploadedPhotos = [];
+
+      // Process files in batches
+      for (let i = 0; i < totalFiles; i += BATCH_SIZE) {
+        const batch = Array.from(files).slice(i, i + BATCH_SIZE);
+
+        // First compress all images in the batch
+        const compressedBatch = await Promise.all(
+          batch.map((file) => compressImage(file))
+        );
+
+        // Then upload the compressed batch
+        const batchPromises = compressedBatch.map(async (file) => {
+          // Create a unique file name
+          const fileName = `${uuidv4()}-${file.name}`;
+          const storageRef = ref(
+            storage,
+            `property_images/${user?.uid || "anonymous"}/${fileName}`
+          );
+
+          // Upload the file
+          await uploadBytes(storageRef, file);
+
+          // Get the download URL
+          const downloadURL = await getDownloadURL(storageRef);
+
+          // Update progress
+          processedFiles++;
+          setUploadProgress(Math.round((processedFiles / totalFiles) * 100));
+
+          return {
+            url: downloadURL,
+            name: file.name,
+            id: uuidv4(),
+          };
+        });
+
+        const batchResults = await Promise.all(batchPromises);
+        allUploadedPhotos = [...allUploadedPhotos, ...batchResults];
+      }
+
+      // Add new photos to existing ones
+      setPropertyData({
+        ...propertyData,
+        photos: [...propertyData.photos, ...allUploadedPhotos],
+      });
+    } catch (error) {
+      console.error("Error uploading photos:", error);
+      setUploadError("Failed to upload photos. Please try again.");
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleRemovePhoto = (photoId) => {
+    setPropertyData({
+      ...propertyData,
+      photos: propertyData.photos.filter((photo) => photo.id !== photoId),
+    });
   };
 
   const getStepContent = (step) => {
@@ -234,6 +383,12 @@ function BecomeHost() {
               with one and add more after you publish.
             </Typography>
 
+            {uploadError && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {uploadError}
+              </Alert>
+            )}
+
             <Box
               sx={{
                 border: "2px dashed #ccc",
@@ -242,7 +397,9 @@ function BecomeHost() {
                 textAlign: "center",
                 bgcolor: "rgba(0,0,0,0.02)",
                 cursor: "pointer",
+                mb: 3,
               }}
+              onClick={() => fileInputRef.current?.click()}
             >
               <Upload sx={{ fontSize: 48, color: "text.secondary", mb: 2 }} />
               <Typography variant="body1" gutterBottom>
@@ -256,11 +413,73 @@ function BecomeHost() {
                 component="label"
                 startIcon={<PhotoCamera />}
                 sx={{ mt: 1 }}
+                disabled={uploading}
               >
-                Upload Photos
-                <input type="file" hidden multiple accept="image/*" />
+                {uploading ? "Uploading..." : "Upload Photos"}
+                <input
+                  type="file"
+                  hidden
+                  multiple
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                />
               </Button>
+              {uploading && (
+                <Box sx={{ width: "100%", mt: 2 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                  >
+                    Uploading: {uploadProgress}%
+                  </Typography>
+                  <LinearProgress
+                    variant="determinate"
+                    value={uploadProgress}
+                  />
+                </Box>
+              )}
             </Box>
+
+            {propertyData.photos.length > 0 && (
+              <Box>
+                <Typography variant="subtitle1" gutterBottom>
+                  Uploaded Photos ({propertyData.photos.length})
+                </Typography>
+                <ImageList cols={3} gap={16}>
+                  {propertyData.photos.map((photo) => (
+                    <ImageListItem key={photo.id} sx={{ position: "relative" }}>
+                      <img
+                        src={photo.url}
+                        alt={photo.name}
+                        loading="lazy"
+                        style={{
+                          borderRadius: 8,
+                          height: 200,
+                          objectFit: "cover",
+                        }}
+                      />
+                      <IconButton
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          bgcolor: "rgba(0,0,0,0.5)",
+                          color: "white",
+                          "&:hover": {
+                            bgcolor: "rgba(255,0,0,0.7)",
+                          },
+                        }}
+                        onClick={() => handleRemovePhoto(photo.id)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </ImageListItem>
+                  ))}
+                </ImageList>
+              </Box>
+            )}
           </Box>
         );
       case 3:
@@ -510,6 +729,28 @@ function BecomeHost() {
                       {propertyData.maxGuests} guest(s)
                     </Typography>
                   </Box>
+                  {propertyData.photos.length > 0 && (
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Photos
+                      </Typography>
+                      <Typography variant="body1">
+                        {propertyData.photos.length} photo(s) uploaded
+                      </Typography>
+                      <Box sx={{ mt: 1 }}>
+                        <img
+                          src={propertyData.photos[0].url}
+                          alt="Property preview"
+                          style={{
+                            width: "100%",
+                            borderRadius: 8,
+                            maxHeight: 150,
+                            objectFit: "cover",
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                  )}
                 </Paper>
               </Grid>
               <Grid item xs={12} sm={6}>

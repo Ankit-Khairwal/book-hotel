@@ -127,7 +127,7 @@ function Login() {
             component="h1"
             sx={{ color: "primary.main", fontWeight: "bold", mb: 1 }}
           >
-            Log in to Airbnb
+            Log in to Hotel Booking
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Welcome back! Please enter your details

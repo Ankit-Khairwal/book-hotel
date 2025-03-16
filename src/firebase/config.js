@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getStorage } from "firebase/storage";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getStorage, connectStorageEmulator } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,5 +21,16 @@ const auth = getAuth(app);
 
 // Initialize Firebase Storage
 const storage = getStorage(app);
+
+// Connect to emulators in development mode only
+if (import.meta.env.DEV) {
+  try {
+    connectAuthEmulator(auth, "http://localhost:9099");
+    connectStorageEmulator(storage, "localhost", 9199);
+    console.log("Connected to Firebase emulators");
+  } catch (error) {
+    console.error("Failed to connect to Firebase emulators:", error);
+  }
+}
 
 export { auth, storage };
