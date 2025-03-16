@@ -113,102 +113,116 @@ function Navbar() {
   return (
     <AppBar position="sticky" color="inherit" elevation={1}>
       <Toolbar sx={{ justifyContent: "space-between" }}>
-        {/* Logo */}
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ cursor: "pointer", color: "primary.main", fontWeight: "bold" }}
-          onClick={() => navigate("/")}
-        >
-          HotelBooking
-        </Typography>
-
-        {/* Search Bar */}
-        <Paper
-          component="form"
-          onSubmit={handleSearch}
+        <Container
+          maxWidth={false}
           sx={{
-            p: "2px 4px",
             display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
-            width: "auto",
-            maxWidth: 600,
-            flex: 1,
-            mx: 3,
-            border: "1px solid #ddd",
-            "&:hover": { boxShadow: "0 2px 4px rgba(0,0,0,0.1)" },
+            px: 2,
           }}
         >
-          <IconButton sx={{ p: "10px" }}>
-            <LocationOn />
-          </IconButton>
-          <InputBase
-            sx={{ ml: 1, flex: 1 }}
-            placeholder={t("nav.searchPlaceholder")}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <IconButton sx={{ p: "10px" }}>
-            <CalendarMonth />
-          </IconButton>
-          <IconButton type="submit" sx={{ p: "10px" }}>
-            <SearchIcon />
-          </IconButton>
-        </Paper>
+          {/* Logo */}
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{
+              cursor: "pointer",
+              color: "primary.main",
+              fontWeight: "bold",
+            }}
+            onClick={() => navigate("/")}
+          >
+            HotelBooking
+          </Typography>
 
-        {/* Navigation Items */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Button color="inherit" onClick={() => navigate("/become-host")}>
-            {t("nav.becomeHost")}
-          </Button>
+          {/* Search Bar */}
+          <Paper
+            component="form"
+            onSubmit={handleSearch}
+            sx={{
+              p: "2px 4px",
+              display: "flex",
+              alignItems: "center",
+              width: "auto",
+              maxWidth: 600,
+              flex: 1,
+              mx: 3,
+              border: "1px solid #ddd",
+              "&:hover": { boxShadow: "0 2px 4px rgba(0,0,0,0.1)" },
+            }}
+          >
+            <IconButton sx={{ p: "10px" }}>
+              <LocationOn />
+            </IconButton>
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              placeholder={t("nav.searchPlaceholder")}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <IconButton sx={{ p: "10px" }}>
+              <CalendarMonth />
+            </IconButton>
+            <IconButton type="submit" sx={{ p: "10px" }}>
+              <SearchIcon />
+            </IconButton>
+          </Paper>
 
-          {/* Language Selector */}
-          <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>
-            <LanguageSelector />
+          {/* Navigation Items */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Button color="inherit" onClick={() => navigate("/become-host")}>
+              {t("nav.becomeHost")}
+            </Button>
+
+            {/* Language Selector */}
+            <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>
+              <LanguageSelector />
+            </Box>
+
+            {user ? (
+              <>
+                <IconButton onClick={handleMenu} color="inherit" sx={{ ml: 2 }}>
+                  {user.photoURL ? (
+                    <Avatar src={user.photoURL} alt={user.displayName} />
+                  ) : (
+                    <AccountCircle />
+                  )}
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                  onClick={handleClose}
+                >
+                  <MenuItem onClick={() => navigate("/profile")}>
+                    {t("nav.profile")}
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/my-bookings")}>
+                    {t("nav.myBookings")}
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/wishlist")}>
+                    {t("nav.wishlist")}
+                  </MenuItem>
+                  <MenuItem onClick={logout}>{t("nav.logout")}</MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <Button color="inherit" onClick={() => navigate("/login")}>
+                  {t("nav.login")}
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => navigate("/signup")}
+                >
+                  {t("nav.signup")}
+                </Button>
+              </>
+            )}
           </Box>
-
-          {user ? (
-            <>
-              <IconButton onClick={handleMenu} color="inherit" sx={{ ml: 2 }}>
-                {user.photoURL ? (
-                  <Avatar src={user.photoURL} alt={user.displayName} />
-                ) : (
-                  <AccountCircle />
-                )}
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                onClick={handleClose}
-              >
-                <MenuItem onClick={() => navigate("/profile")}>
-                  {t("nav.profile")}
-                </MenuItem>
-                <MenuItem onClick={() => navigate("/my-bookings")}>
-                  {t("nav.myBookings")}
-                </MenuItem>
-                <MenuItem onClick={() => navigate("/wishlist")}>
-                  {t("nav.wishlist")}
-                </MenuItem>
-                <MenuItem onClick={logout}>{t("nav.logout")}</MenuItem>
-              </Menu>
-            </>
-          ) : (
-            <>
-              <Button color="inherit" onClick={() => navigate("/login")}>
-                {t("nav.login")}
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => navigate("/signup")}
-              >
-                {t("nav.signup")}
-              </Button>
-            </>
-          )}
-        </Box>
+        </Container>
       </Toolbar>
     </AppBar>
   );

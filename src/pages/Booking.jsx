@@ -85,7 +85,7 @@ function Booking() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth={false} sx={{ py: 4 }}>
       <Grid container spacing={4}>
         {/* Booking Form */}
         <Grid item xs={12} md={8}>

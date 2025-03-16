@@ -94,20 +94,30 @@ function PropertyCard({ property }) {
             position: "absolute",
             top: 8,
             left: 8,
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            fontWeight: "600",
+            color: "booking.dark",
+            borderColor: "booking.light",
+            "& .MuiChip-label": { px: 1 },
           }}
         />
       </Box>
       <CardContent sx={{ flexGrow: 1, pb: 2 }}>
         <Box sx={{ mb: 1 }}>
-          <Typography variant="h6" component="div" noWrap>
+          <Typography
+            variant="h6"
+            component="div"
+            noWrap
+            sx={{ fontWeight: "600", color: "booking.dark" }}
+          >
             {property.name}
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-            <LocationOn
-              sx={{ fontSize: 16, color: "text.secondary", mr: 0.5 }}
-            />
-            <Typography variant="body2" color="text.secondary">
+            <LocationOn sx={{ fontSize: 16, color: "primary.main", mr: 0.5 }} />
+            <Typography
+              variant="body2"
+              sx={{ color: "text.primary", fontWeight: "500" }}
+            >
               {property.location.city}, {property.location.country}
             </Typography>
           </Box>
@@ -119,27 +129,33 @@ function PropertyCard({ property }) {
             precision={0.1}
             readOnly
             size="small"
+            sx={{ color: "booking.main" }}
           />
-          <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+          <Typography variant="body2" sx={{ ml: 1, fontWeight: "500" }}>
             ({property.reviews})
           </Typography>
         </Box>
 
         <Box sx={{ display: "flex", gap: 1, mb: 2, flexWrap: "wrap" }}>
-          {property.amenities
-            .slice(0, 4)
-            .map(
-              (amenity) =>
-                amenityIcons[amenity] && (
-                  <Chip
-                    key={amenity}
-                    icon={amenityIcons[amenity]}
-                    label={t(`amenities.${amenity}`)}
-                    size="small"
-                    variant="outlined"
-                  />
-                )
-            )}
+          {property.amenities.slice(0, 4).map(
+            (amenity) =>
+              amenityIcons[amenity] && (
+                <Chip
+                  key={amenity}
+                  icon={amenityIcons[amenity]}
+                  label={t(`amenities.${amenity}`)}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    borderColor: "booking.light",
+                    "& .MuiChip-icon": {
+                      color: "booking.main",
+                    },
+                    fontWeight: "500",
+                  }}
+                />
+              )
+          )}
         </Box>
 
         <Box
@@ -150,7 +166,11 @@ function PropertyCard({ property }) {
           }}
         >
           <Box>
-            <Typography variant="h6" component="div" color="primary">
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ color: "primary.main", fontWeight: "700" }}
+            >
               ${property.price.base}
             </Typography>
             <Typography variant="caption" color="text.secondary">

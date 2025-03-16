@@ -34,7 +34,7 @@ import {
   FitnessCenter,
   KeyboardArrowDown,
 } from "@mui/icons-material";
-import { properties, propertyTypes, amenities } from "../data/properties";
+import { properties } from "../data/properties";
 import PropertyGrid from "../components/PropertyGrid";
 import Footer from "../components/Footer";
 
@@ -109,10 +109,6 @@ function Home() {
     }
   };
 
-  const handlePropertyClick = (id) => {
-    navigate(`/hotel/${id}`);
-  };
-
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       {/* Hero Section */}
@@ -138,7 +134,7 @@ function Home() {
         }}
       >
         <Container
-          maxWidth="xl"
+          maxWidth={false}
           sx={{ height: "100%", position: "relative", zIndex: 1 }}
         >
           <Box
@@ -230,7 +226,7 @@ function Home() {
       </Box>
 
       {/* Categories */}
-      <Container maxWidth="xl" sx={{ mt: 4 }}>
+      <Container maxWidth={false} sx={{ mt: 4 }}>
         <Tabs
           value={selectedCategory}
           onChange={handleCategoryChange}
@@ -277,7 +273,7 @@ function Home() {
           <Typography
             variant="h4"
             component="h2"
-            sx={{ mb: 4, fontWeight: 600 }}
+            sx={{ mb: 4, fontWeight: 600, color: "primary.main" }}
           >
             {t("home.featuredProperties")}
           </Typography>
@@ -289,7 +285,7 @@ function Home() {
           <Typography
             variant="h4"
             component="h2"
-            sx={{ mb: 4, fontWeight: 600 }}
+            sx={{ mb: 4, fontWeight: 600, color: "primary.main" }}
           >
             {t("home.featuredDestinations")}
           </Typography>

@@ -116,7 +116,7 @@ function Profile() {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ py: 8 }}>
+    <Container maxWidth={false} sx={{ py: 8 }}>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Typography variant="h4" component="h1" sx={{ mb: 3 }}>

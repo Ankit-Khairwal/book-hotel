@@ -108,7 +108,7 @@ function MyBookings() {
   const getStatusColor = (status) => {
     switch (status) {
       case "upcoming":
-        return "primary";
+        return "booking";
       case "completed":
         return "success";
       case "cancelled":
@@ -139,8 +139,12 @@ function MyBookings() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 8 }}>
-      <Typography variant="h4" component="h1" sx={{ mb: 4 }}>
+    <Container maxWidth={false} sx={{ py: 8 }}>
+      <Typography
+        variant="h4"
+        component="h1"
+        sx={{ mb: 4, color: "primary.main" }}
+      >
         {t("myBookings.title")}
       </Typography>
 
@@ -154,6 +158,8 @@ function MyBookings() {
         value={activeTab}
         onChange={(e, newValue) => setActiveTab(newValue)}
         sx={{ mb: 4 }}
+        textColor="booking"
+        indicatorColor="booking"
       >
         <Tab label={t("bookingStatus.all")} value="all" />
         <Tab label={t("bookingStatus.upcoming")} value="upcoming" />
@@ -179,7 +185,7 @@ function MyBookings() {
           </Typography>
           <Button
             variant="contained"
-            color="primary"
+            color="booking"
             onClick={() => navigate("/hotels")}
             sx={{ mt: 2 }}
           >
@@ -239,6 +245,7 @@ function MyBookings() {
                     <Box sx={{ display: "flex", gap: 2 }}>
                       <Button
                         variant="contained"
+                        color="booking"
                         endIcon={<ArrowForward />}
                         onClick={() => navigate(`/booking/${booking.id}`)}
                       >
@@ -247,6 +254,7 @@ function MyBookings() {
                       {booking.status === "completed" && !booking.rating && (
                         <Button
                           variant="outlined"
+                          color="booking"
                           startIcon={<Star />}
                           onClick={() => {
                             // TODO: Implement review functionality
@@ -262,7 +270,7 @@ function MyBookings() {
                       {booking.status === "upcoming" && (
                         <Button
                           variant="outlined"
-                          color="error"
+                          color="booking"
                           startIcon={<Cancel />}
                           onClick={() => handleCancelBooking(booking.id)}
                         >

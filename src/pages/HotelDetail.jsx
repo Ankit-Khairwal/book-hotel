@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -65,16 +65,16 @@ import { getPropertyById } from "../data/properties";
 import LanguageSelector from "../components/LanguageSelector";
 
 const amenityIcons = {
-  wifi: <Wifi />,
-  pool: <Pool />,
-  spa: <Spa />,
-  gym: <FitnessCenter />,
-  restaurant: <Restaurant />,
-  beachAccess: <BeachAccess />,
-  mountainView: <Landscape />,
-  parking: <LocalParking />,
-  roomService: <Room />,
-  airConditioning: <AcUnit />,
+  wifi: <Wifi sx={{ color: "booking.main" }} />,
+  pool: <Pool sx={{ color: "booking.main" }} />,
+  spa: <Spa sx={{ color: "booking.main" }} />,
+  gym: <FitnessCenter sx={{ color: "booking.main" }} />,
+  restaurant: <Restaurant sx={{ color: "booking.main" }} />,
+  beachAccess: <BeachAccess sx={{ color: "booking.main" }} />,
+  mountainView: <Landscape sx={{ color: "booking.main" }} />,
+  parking: <LocalParking sx={{ color: "booking.main" }} />,
+  roomService: <Room sx={{ color: "booking.main" }} />,
+  airConditioning: <AcUnit sx={{ color: "booking.main" }} />,
 };
 
 // Mock reviews data
@@ -255,7 +255,7 @@ function HotelDetail() {
       >
         <Box
           sx={{
-            maxWidth: "1760px",
+            maxWidth: "100%",
             mx: "auto",
             px: { xs: 2, sm: 4, md: 6, lg: 8 },
           }}
@@ -267,7 +267,10 @@ function HotelDetail() {
               alignItems: "center",
             }}
           >
-            <Typography variant="h6" sx={{ fontWeight: "500" }}>
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: "600", color: "primary.main" }}
+            >
               {hotel.name}
             </Typography>
             <LanguageSelector />
@@ -282,8 +285,11 @@ function HotelDetail() {
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Star sx={{ fontSize: 18, mr: 0.5 }} />
-                <Typography variant="body2" sx={{ fontWeight: "500" }}>
+                <Star sx={{ fontSize: 18, mr: 0.5, color: "booking.main" }} />
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: "500", color: "booking.dark" }}
+                >
                   {hotel.rating}
                 </Typography>
               </Box>
@@ -292,6 +298,7 @@ function HotelDetail() {
                 sx={{
                   textDecoration: "underline",
                   fontWeight: "500",
+                  color: "text.primary",
                 }}
               >
                 {hotel.reviews} {t("common.reviews")}
@@ -301,6 +308,7 @@ function HotelDetail() {
                 sx={{
                   textDecoration: "underline",
                   fontWeight: "500",
+                  color: "text.primary",
                 }}
               >
                 {hotel.location.city}, {hotel.location.country}
@@ -309,7 +317,7 @@ function HotelDetail() {
             <Box sx={{ display: "flex", gap: 2 }}>
               <Button
                 startIcon={<Share />}
-                sx={{ textTransform: "none", color: "text.primary" }}
+                sx={{ textTransform: "none", color: "booking.dark" }}
               >
                 {t("common.share")}
               </Button>
@@ -318,7 +326,7 @@ function HotelDetail() {
                   isFavorite ? <Favorite color="error" /> : <FavoriteBorder />
                 }
                 onClick={() => setIsFavorite(!isFavorite)}
-                sx={{ textTransform: "none", color: "text.primary" }}
+                sx={{ textTransform: "none", color: "booking.dark" }}
               >
                 {t("common.save")}
               </Button>
@@ -330,7 +338,7 @@ function HotelDetail() {
       {/* Photo Grid */}
       <Box
         sx={{
-          maxWidth: "1760px",
+          maxWidth: "100%",
           mx: "auto",
           px: { xs: 2, sm: 4, md: 6, lg: 8 },
           py: 3,
@@ -388,10 +396,13 @@ function HotelDetail() {
               right: 24,
               bottom: 24,
               bgcolor: "background.paper",
-              color: "text.primary",
+              color: "booking.dark",
               textTransform: "none",
+              fontWeight: "600",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
               "&:hover": {
                 bgcolor: "background.paper",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
               },
             }}
           >
@@ -410,39 +421,54 @@ function HotelDetail() {
                 sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}
               >
                 <Box>
-                  <Typography variant="h4" sx={{ fontWeight: "500", mb: 1 }}>
+                  <Typography
+                    variant="h4"
+                    sx={{ fontWeight: "600", mb: 1, color: "booking.main" }}
+                  >
                     {t(`propertyTypes.${hotel.type}`)} {t("common.hostedBy")}{" "}
                     John Doe
                   </Typography>
-                  <Typography color="text.secondary">
+                  <Typography
+                    sx={{
+                      color: "text.primary",
+                      fontSize: "1.1rem",
+                      fontWeight: "500",
+                    }}
+                  >
                     8 {t("common.guests")} · 4 {t("common.bedrooms")} · 6{" "}
                     {t("common.beds")} · 3 {t("common.baths")}
                   </Typography>
                 </Box>
-                <Avatar sx={{ width: 56, height: 56 }}>
+                <Avatar sx={{ width: 56, height: 56, bgcolor: "booking.main" }}>
                   <Person />
                 </Avatar>
               </Box>
 
               <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <SupervisorAccount />
+                  <SupervisorAccount sx={{ color: "booking.main" }} />
                   <Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: "500" }}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ fontWeight: "600", color: "booking.dark" }}
+                    >
                       {t("common.superhost")}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.primary">
                       {t("common.superhostDesc")}
                     </Typography>
                   </Box>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <LocationOn />
+                  <LocationOn sx={{ color: "booking.main" }} />
                   <Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: "500" }}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ fontWeight: "600", color: "booking.dark" }}
+                    >
                       {t("common.greatLocation")}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.primary">
                       95% {t("common.recentGuestsRated")}
                     </Typography>
                   </Box>
@@ -455,13 +481,23 @@ function HotelDetail() {
             >
               <Typography
                 variant="body1"
-                sx={{ whiteSpace: "pre-line", mb: 4 }}
+                sx={{
+                  whiteSpace: "pre-line",
+                  mb: 4,
+                  fontSize: "1.05rem",
+                  color: "text.primary",
+                  lineHeight: 1.6,
+                }}
               >
                 {hotel.description}
               </Typography>
               <Button
                 variant="text"
-                sx={{ textTransform: "none", fontWeight: "500" }}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: "500",
+                  color: "booking.main",
+                }}
               >
                 {t("common.showMore")} →
               </Button>
@@ -470,7 +506,10 @@ function HotelDetail() {
             <Box
               sx={{ py: 6, borderBottom: "1px solid", borderColor: "divider" }}
             >
-              <Typography variant="h5" sx={{ fontWeight: "500", mb: 4 }}>
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: "600", mb: 4, color: "booking.dark" }}
+              >
                 {t("common.whatThisPlaceOffers")}
               </Typography>
               <Grid container spacing={2}>
@@ -482,16 +521,25 @@ function HotelDetail() {
                         alignItems: "center",
                         gap: 2,
                         py: 1,
+                        "&:hover": {
+                          bgcolor: "rgba(74, 144, 226, 0.04)",
+                          borderRadius: 1,
+                        },
                       }}
                     >
                       {amenityIcons[amenity]}
-                      <Typography>{t(`amenities.${amenity}`)}</Typography>
+                      <Typography
+                        sx={{ fontWeight: "500", color: "text.primary" }}
+                      >
+                        {t(`amenities.${amenity}`)}
+                      </Typography>
                     </Box>
                   </Grid>
                 ))}
               </Grid>
               <Button
                 variant="outlined"
+                color="booking"
                 sx={{ mt: 4, textTransform: "none", fontWeight: "500" }}
               >
                 {t("common.showAllAmenities")}
@@ -502,14 +550,16 @@ function HotelDetail() {
           {/* Right Column - Booking Card */}
           <Grid item xs={12} md={5}>
             <Paper
-              elevation={1}
+              elevation={2}
               sx={{
                 p: 4,
                 position: "sticky",
                 top: 100,
                 borderRadius: 3,
                 border: "1px solid",
-                borderColor: "divider",
+                borderColor: "booking.light",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                bgcolor: "background.paper",
               }}
             >
               <Box sx={{ mb: 4 }}>
@@ -517,18 +567,18 @@ function HotelDetail() {
                   <Typography
                     variant="h4"
                     component="span"
-                    sx={{ fontWeight: "600" }}
+                    sx={{ fontWeight: "700", color: "booking.dark" }}
                   >
                     ${hotel.price.base}
                   </Typography>
-                  <Typography variant="body1" color="text.secondary">
+                  <Typography variant="body1" sx={{ color: "text.primary" }}>
                     {t("common.perNight")}
                   </Typography>
                 </Box>
                 <Box
                   sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}
                 >
-                  <Star sx={{ fontSize: 14 }} />
+                  <Star sx={{ fontSize: 14, color: "booking.main" }} />
                   <Typography variant="body2">
                     <strong>{hotel.rating}</strong> · {hotel.reviews}{" "}
                     {t("common.reviews")}
@@ -559,7 +609,10 @@ function HotelDetail() {
                       >
                         {t("common.dates")}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.primary" }}
+                      >
                         {t("common.addDates")}
                       </Typography>
                     </Box>
@@ -572,7 +625,10 @@ function HotelDetail() {
                       >
                         {t("common.guests")}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.primary" }}
+                      >
                         1 {t("common.guest")}
                       </Typography>
                     </Box>
@@ -582,20 +638,11 @@ function HotelDetail() {
 
               <Button
                 variant="contained"
+                color="primary"
                 fullWidth
                 size="large"
                 onClick={handleBooking}
-                sx={{
-                  bgcolor: "primary.main",
-                  color: "common.white",
-                  py: 1.5,
-                  fontSize: "1rem",
-                  textTransform: "none",
-                  fontWeight: "500",
-                  "&:hover": {
-                    bgcolor: "primary.dark",
-                  },
-                }}
+                sx={{ py: 1.5, fontWeight: "600", fontSize: "1rem" }}
               >
                 {t("common.reserve")}
               </Button>
@@ -603,8 +650,7 @@ function HotelDetail() {
               <Typography
                 variant="body2"
                 align="center"
-                color="text.secondary"
-                sx={{ mt: 2 }}
+                sx={{ mt: 2, color: "text.secondary" }}
               >
                 {t("common.noCharge")}
               </Typography>
@@ -619,11 +665,11 @@ function HotelDetail() {
                 >
                   <Typography
                     variant="body2"
-                    sx={{ textDecoration: "underline" }}
+                    sx={{ textDecoration: "underline", color: "text.primary" }}
                   >
                     ${hotel.price.base} x 5 {t("common.nights")}
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ color: "text.primary" }}>
                     ${hotel.price.base * 5}
                   </Typography>
                 </Box>
@@ -636,11 +682,13 @@ function HotelDetail() {
                 >
                   <Typography
                     variant="body2"
-                    sx={{ textDecoration: "underline" }}
+                    sx={{ textDecoration: "underline", color: "text.primary" }}
                   >
                     {t("common.cleaningFee")}
                   </Typography>
-                  <Typography variant="body2">$100</Typography>
+                  <Typography variant="body2" sx={{ color: "text.primary" }}>
+                    $100
+                  </Typography>
                 </Box>
                 <Box
                   sx={{
@@ -651,11 +699,13 @@ function HotelDetail() {
                 >
                   <Typography
                     variant="body2"
-                    sx={{ textDecoration: "underline" }}
+                    sx={{ textDecoration: "underline", color: "text.primary" }}
                   >
                     {t("common.serviceFee")}
                   </Typography>
-                  <Typography variant="body2">$80</Typography>
+                  <Typography variant="body2" sx={{ color: "text.primary" }}>
+                    $80
+                  </Typography>
                 </Box>
                 <Divider sx={{ my: 2 }} />
                 <Box
@@ -665,10 +715,16 @@ function HotelDetail() {
                     fontWeight: "600",
                   }}
                 >
-                  <Typography variant="subtitle2">
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "text.primary" }}
+                  >
                     {t("common.total")}
                   </Typography>
-                  <Typography variant="subtitle2">
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ color: "text.primary" }}
+                  >
                     ${hotel.price.base * 5 + 180}
                   </Typography>
                 </Box>
@@ -680,11 +736,11 @@ function HotelDetail() {
         {/* Reviews Section */}
         <Box sx={{ mt: 8, mb: 8 }}>
           <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
-            <Star sx={{ mr: 1 }} />
+            <Star sx={{ mr: 1, color: "booking.main" }} />
             <Typography
               variant="h4"
               component="h2"
-              sx={{ fontWeight: "500", mr: 1 }}
+              sx={{ fontWeight: "600", mr: 1, color: "booking.dark" }}
             >
               {hotel.rating}
             </Typography>
@@ -708,7 +764,10 @@ function HotelDetail() {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography variant="body1">
+                    <Typography
+                      variant="body1"
+                      sx={{ color: "text.primary", fontWeight: "500" }}
+                    >
                       {t("common.cleanliness")}
                     </Typography>
                     <Box
@@ -726,13 +785,15 @@ function HotelDetail() {
                           borderRadius: 2,
                           width: "80%",
                           mr: 1,
-                          bgcolor: "grey.200",
+                          bgcolor: "rgba(74, 144, 226, 0.1)",
                           "& .MuiLinearProgress-bar": {
-                            bgcolor: "text.primary",
+                            bgcolor: "booking.main",
                           },
                         }}
                       />
-                      <Typography variant="body2">4.8</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: "600" }}>
+                        4.8
+                      </Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -744,7 +805,10 @@ function HotelDetail() {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography variant="body1">
+                    <Typography
+                      variant="body1"
+                      sx={{ color: "text.primary", fontWeight: "500" }}
+                    >
                       {t("common.accuracy")}
                     </Typography>
                     <Box
@@ -762,13 +826,15 @@ function HotelDetail() {
                           borderRadius: 2,
                           width: "80%",
                           mr: 1,
-                          bgcolor: "grey.200",
+                          bgcolor: "rgba(74, 144, 226, 0.1)",
                           "& .MuiLinearProgress-bar": {
-                            bgcolor: "text.primary",
+                            bgcolor: "booking.main",
                           },
                         }}
                       />
-                      <Typography variant="body2">5.0</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: "600" }}>
+                        5.0
+                      </Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -780,7 +846,10 @@ function HotelDetail() {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography variant="body1">
+                    <Typography
+                      variant="body1"
+                      sx={{ color: "text.primary", fontWeight: "500" }}
+                    >
                       {t("common.communication")}
                     </Typography>
                     <Box
@@ -798,13 +867,15 @@ function HotelDetail() {
                           borderRadius: 2,
                           width: "80%",
                           mr: 1,
-                          bgcolor: "grey.200",
+                          bgcolor: "rgba(74, 144, 226, 0.1)",
                           "& .MuiLinearProgress-bar": {
-                            bgcolor: "text.primary",
+                            bgcolor: "booking.main",
                           },
                         }}
                       />
-                      <Typography variant="body2">4.5</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: "600" }}>
+                        4.5
+                      </Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -816,7 +887,10 @@ function HotelDetail() {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography variant="body1">
+                    <Typography
+                      variant="body1"
+                      sx={{ color: "text.primary", fontWeight: "500" }}
+                    >
                       {t("common.location")}
                     </Typography>
                     <Box
@@ -834,13 +908,15 @@ function HotelDetail() {
                           borderRadius: 2,
                           width: "80%",
                           mr: 1,
-                          bgcolor: "grey.200",
+                          bgcolor: "rgba(74, 144, 226, 0.1)",
                           "& .MuiLinearProgress-bar": {
-                            bgcolor: "text.primary",
+                            bgcolor: "booking.main",
                           },
                         }}
                       />
-                      <Typography variant="body2">4.9</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: "600" }}>
+                        4.9
+                      </Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -852,7 +928,10 @@ function HotelDetail() {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography variant="body1">
+                    <Typography
+                      variant="body1"
+                      sx={{ color: "text.primary", fontWeight: "500" }}
+                    >
                       {t("common.checkIn")}
                     </Typography>
                     <Box
@@ -870,13 +949,15 @@ function HotelDetail() {
                           borderRadius: 2,
                           width: "80%",
                           mr: 1,
-                          bgcolor: "grey.200",
+                          bgcolor: "rgba(74, 144, 226, 0.1)",
                           "& .MuiLinearProgress-bar": {
-                            bgcolor: "text.primary",
+                            bgcolor: "booking.main",
                           },
                         }}
                       />
-                      <Typography variant="body2">4.8</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: "600" }}>
+                        4.8
+                      </Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -888,7 +969,12 @@ function HotelDetail() {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography variant="body1">{t("common.value")}</Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{ color: "text.primary", fontWeight: "500" }}
+                    >
+                      {t("common.value")}
+                    </Typography>
                     <Box
                       sx={{
                         display: "flex",
@@ -904,13 +990,15 @@ function HotelDetail() {
                           borderRadius: 2,
                           width: "80%",
                           mr: 1,
-                          bgcolor: "grey.200",
+                          bgcolor: "rgba(74, 144, 226, 0.1)",
                           "& .MuiLinearProgress-bar": {
-                            bgcolor: "text.primary",
+                            bgcolor: "booking.main",
                           },
                         }}
                       />
-                      <Typography variant="body2">4.6</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: "600" }}>
+                        4.6
+                      </Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -932,29 +1020,36 @@ function HotelDetail() {
                     <Box>
                       <Typography
                         variant="subtitle1"
-                        sx={{ fontWeight: "500" }}
+                        sx={{ fontWeight: "600", color: "booking.dark" }}
                       >
                         {review.name}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.primary" }}
+                      >
                         {review.date}
                       </Typography>
                     </Box>
                   </Box>
                 </Box>
-                <Typography variant="body1">{review.comment}</Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ lineHeight: 1.6, color: "text.primary" }}
+                >
+                  {review.comment}
+                </Typography>
               </Grid>
             ))}
           </Grid>
 
           <Button
             variant="outlined"
+            color="booking"
             sx={{
               mt: 2,
               textTransform: "none",
               fontWeight: "500",
-              borderColor: "text.primary",
-              color: "text.primary",
             }}
           >
             {t("common.showAllReviews")} ({hotel.reviews})
@@ -966,7 +1061,7 @@ function HotelDetail() {
           <Typography
             variant="h4"
             component="h2"
-            sx={{ fontWeight: "500", mb: 4 }}
+            sx={{ fontWeight: "600", mb: 4, color: "booking.dark" }}
           >
             {t("common.whereYouWillBe")}
           </Typography>
@@ -975,27 +1070,715 @@ function HotelDetail() {
             sx={{
               height: 480,
               width: "100%",
-              bgcolor: "grey.200",
+              bgcolor: "#e8f0e8",
               borderRadius: 4,
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
               mb: 3,
+              border: "1px solid",
+              borderColor: "booking.light",
+              position: "relative",
+              overflow: "hidden",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
             }}
           >
-            <Map sx={{ fontSize: 60, color: "text.secondary" }} />
+            {/* Map Background - Satellite View */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundImage: `url('https://maps.googleapis.com/maps/api/staticmap?center=40.7128,-74.0060&zoom=13&size=1200x800&maptype=roadmap&style=feature:all|element:labels|visibility:on&style=feature:landscape|element:all|color:0xf2f2f2&style=feature:poi|element:all|visibility:off&style=feature:road|element:all|saturation:-100|lightness:45&style=feature:road.highway|element:all|visibility:simplified&style=feature:road.arterial|element:labels.icon|visibility:off&style=feature:transit|element:all|visibility:off&style=feature:water|element:all|color:0x46bcec|visibility:on&key=YOUR_API_KEY')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                "&::before": {
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "rgba(255,255,255,0.1)",
+                  backdropFilter: "blur(1px)",
+                  zIndex: 1,
+                },
+              }}
+            />
+
+            {/* Fallback Map Background */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 2,
+                backgroundImage: `url('/map-background.jpg')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                opacity: 0.9,
+              }}
+            />
+
+            {/* Map Grid Overlay */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 3,
+                opacity: 0.7,
+              }}
+            >
+              {/* Horizontal grid lines */}
+              {[...Array(20)].map((_, i) => (
+                <Box
+                  key={`h-grid-${i}`}
+                  sx={{
+                    position: "absolute",
+                    top: `${i * 5}%`,
+                    left: 0,
+                    width: "100%",
+                    height: "1px",
+                    bgcolor: "rgba(255,255,255,0.2)",
+                  }}
+                />
+              ))}
+
+              {/* Vertical grid lines */}
+              {[...Array(20)].map((_, i) => (
+                <Box
+                  key={`v-grid-${i}`}
+                  sx={{
+                    position: "absolute",
+                    left: `${i * 5}%`,
+                    top: 0,
+                    height: "100%",
+                    width: "1px",
+                    bgcolor: "rgba(255,255,255,0.2)",
+                  }}
+                />
+              ))}
+            </Box>
+
+            {/* Main Roads */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 4,
+              }}
+            >
+              {/* Horizontal main roads */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "30%",
+                  left: 0,
+                  width: "100%",
+                  height: "6px",
+                  bgcolor: "rgba(255, 255, 255, 0.8)",
+                  boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                }}
+              />
+
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "60%",
+                  left: 0,
+                  width: "100%",
+                  height: "4px",
+                  bgcolor: "rgba(255, 255, 255, 0.7)",
+                  boxShadow: "0 0 8px rgba(0,0,0,0.2)",
+                }}
+              />
+
+              {/* Vertical main roads */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  left: "25%",
+                  top: 0,
+                  height: "100%",
+                  width: "6px",
+                  bgcolor: "rgba(255, 255, 255, 0.8)",
+                  boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                }}
+              />
+
+              <Box
+                sx={{
+                  position: "absolute",
+                  left: "75%",
+                  top: 0,
+                  height: "100%",
+                  width: "4px",
+                  bgcolor: "rgba(255, 255, 255, 0.7)",
+                  boxShadow: "0 0 8px rgba(0,0,0,0.2)",
+                }}
+              />
+            </Box>
+
+            {/* Secondary Roads */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 4,
+              }}
+            >
+              {/* Horizontal secondary roads */}
+              {[15, 45, 75].map((pos, i) => (
+                <Box
+                  key={`h-road-${i}`}
+                  sx={{
+                    position: "absolute",
+                    top: `${pos}%`,
+                    left: 0,
+                    width: "100%",
+                    height: "2px",
+                    bgcolor: "rgba(255, 255, 255, 0.6)",
+                  }}
+                />
+              ))}
+
+              {/* Vertical secondary roads */}
+              {[10, 40, 60, 90].map((pos, i) => (
+                <Box
+                  key={`v-road-${i}`}
+                  sx={{
+                    position: "absolute",
+                    left: `${pos}%`,
+                    top: 0,
+                    height: "100%",
+                    width: "2px",
+                    bgcolor: "rgba(255, 255, 255, 0.6)",
+                  }}
+                />
+              ))}
+            </Box>
+
+            {/* City Blocks */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 5,
+              }}
+            >
+              {/* Generate city blocks in a grid pattern */}
+              {[...Array(5)].map((_, row) =>
+                [...Array(5)].map((_, col) => (
+                  <Box
+                    key={`block-${row}-${col}`}
+                    sx={{
+                      position: "absolute",
+                      top: `${row * 15 + 10}%`,
+                      left: `${col * 15 + 10}%`,
+                      width: "12%",
+                      height: "12%",
+                      bgcolor: "rgba(210, 210, 210, 0.6)",
+                      border: "1px solid rgba(255,255,255,0.3)",
+                    }}
+                  />
+                ))
+              )}
+            </Box>
+
+            {/* Parks and Green Areas */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: "65%",
+                left: "15%",
+                width: "20%",
+                height: "25%",
+                bgcolor: "rgba(76, 175, 80, 0.4)",
+                borderRadius: "50%",
+                border: "1px solid rgba(76, 175, 80, 0.6)",
+                zIndex: 5,
+              }}
+            />
+
+            <Box
+              sx={{
+                position: "absolute",
+                top: "10%",
+                right: "10%",
+                width: "15%",
+                height: "15%",
+                bgcolor: "rgba(76, 175, 80, 0.4)",
+                borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%",
+                border: "1px solid rgba(76, 175, 80, 0.6)",
+                zIndex: 5,
+              }}
+            />
+
+            {/* Water Body */}
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: "5%",
+                right: "15%",
+                width: "30%",
+                height: "20%",
+                bgcolor: "rgba(33, 150, 243, 0.4)",
+                borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%",
+                border: "1px solid rgba(33, 150, 243, 0.6)",
+                zIndex: 5,
+              }}
+            />
+
+            {/* Location marker with animation */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: "48%",
+                left: "48%",
+                transform: "translate(-50%, -50%)",
+                zIndex: 10,
+              }}
+            >
+              {/* Outer ripple effect */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  width: 50,
+                  height: 50,
+                  borderRadius: "50%",
+                  bgcolor: "rgba(255, 56, 92, 0.1)",
+                  animation: "ripple 2s infinite ease-out",
+                  "@keyframes ripple": {
+                    "0%": {
+                      transform: "scale(0.5)",
+                      opacity: 1,
+                    },
+                    "100%": {
+                      transform: "scale(2.5)",
+                      opacity: 0,
+                    },
+                  },
+                }}
+              />
+
+              {/* Middle ripple effect */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  bgcolor: "rgba(255, 56, 92, 0.2)",
+                  animation: "ripple 2s infinite ease-out 0.3s",
+                  "@keyframes ripple": {
+                    "0%": {
+                      transform: "scale(0.5)",
+                      opacity: 1,
+                    },
+                    "100%": {
+                      transform: "scale(2)",
+                      opacity: 0,
+                    },
+                  },
+                }}
+              />
+
+              {/* Inner ripple effect */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  width: 30,
+                  height: 30,
+                  borderRadius: "50%",
+                  bgcolor: "rgba(255, 56, 92, 0.3)",
+                  animation: "ripple 2s infinite ease-out 0.6s",
+                  "@keyframes ripple": {
+                    "0%": {
+                      transform: "scale(0.5)",
+                      opacity: 1,
+                    },
+                    "100%": {
+                      transform: "scale(1.5)",
+                      opacity: 0,
+                    },
+                  },
+                }}
+              />
+
+              {/* Center marker */}
+              <Box
+                sx={{
+                  position: "relative",
+                  width: 24,
+                  height: 24,
+                  borderRadius: "50%",
+                  bgcolor: "primary.main",
+                  border: "3px solid white",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                  zIndex: 11,
+                }}
+              />
+            </Box>
+
+            {/* Location labels */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: "15%",
+                right: "15%",
+                transform: "translate(0, -50%)",
+                bgcolor: "background.paper",
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                zIndex: 10,
+                fontSize: "0.75rem",
+                fontWeight: "600",
+                color: "text.primary",
+              }}
+            >
+              Central Park
+            </Box>
+
+            <Box
+              sx={{
+                position: "absolute",
+                top: "65%",
+                left: "15%",
+                transform: "translate(0, -50%)",
+                bgcolor: "background.paper",
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                zIndex: 10,
+                fontSize: "0.75rem",
+                fontWeight: "600",
+                color: "text.primary",
+              }}
+            >
+              City Park
+            </Box>
+
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: "15%",
+                right: "25%",
+                transform: "translate(0, 0)",
+                bgcolor: "background.paper",
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                zIndex: 10,
+                fontSize: "0.75rem",
+                fontWeight: "600",
+                color: "text.primary",
+              }}
+            >
+              Lake View
+            </Box>
+
+            {/* Compass Rose */}
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 20,
+                right: 20,
+                width: 60,
+                height: 60,
+                bgcolor: "background.paper",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                zIndex: 10,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  position: "relative",
+                }}
+              >
+                {/* North */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                    color: "primary.main",
+                  }}
+                >
+                  N
+                </Box>
+                {/* East */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    right: 0,
+                    transform: "translateY(-50%)",
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                    color: "text.primary",
+                  }}
+                >
+                  E
+                </Box>
+                {/* South */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                    color: "text.primary",
+                  }}
+                >
+                  S
+                </Box>
+                {/* West */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: 0,
+                    transform: "translateY(-50%)",
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                    color: "text.primary",
+                  }}
+                >
+                  W
+                </Box>
+                {/* Compass lines */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: 0,
+                    width: "100%",
+                    height: "1px",
+                    bgcolor: "divider",
+                  }}
+                />
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: "50%",
+                    width: "1px",
+                    height: "100%",
+                    bgcolor: "divider",
+                  }}
+                />
+              </Box>
+            </Box>
+
+            {/* Hotel location info */}
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 20,
+                left: 20,
+                zIndex: 20,
+                bgcolor: "background.paper",
+                p: 2,
+                borderRadius: 2,
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                maxWidth: 300,
+                border: "1px solid",
+                borderColor: "booking.light",
+              }}
+            >
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+              >
+                <LocationOn sx={{ color: "primary.main" }} />
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: "600", color: "booking.dark" }}
+                >
+                  {hotel.name}
+                </Typography>
+              </Box>
+              <Typography variant="body2" sx={{ color: "text.primary", mb: 1 }}>
+                {hotel.location.city}, {hotel.location.country}
+              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <Star sx={{ fontSize: 14, color: "booking.main" }} />
+                <Typography variant="body2" sx={{ fontWeight: "500" }}>
+                  {hotel.rating} · {t("common.greatLocation")}
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Map controls */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: 20,
+                right: 20,
+                zIndex: 20,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                  minWidth: "auto",
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  p: 0,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                }}
+              >
+                +
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                  minWidth: "auto",
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  p: 0,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                }}
+              >
+                -
+              </Button>
+            </Box>
+
+            {/* Map Type Selector */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: 20,
+                left: 20,
+                zIndex: 20,
+                bgcolor: "background.paper",
+                borderRadius: 2,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                overflow: "hidden",
+              }}
+            >
+              <Button
+                variant="contained"
+                disableElevation
+                sx={{
+                  bgcolor: "primary.main",
+                  color: "white",
+                  borderRadius: 0,
+                  px: 2,
+                  py: 1,
+                  fontSize: "0.75rem",
+                  "&:hover": {
+                    bgcolor: "primary.dark",
+                  },
+                }}
+              >
+                Map
+              </Button>
+              <Button
+                variant="text"
+                sx={{
+                  color: "text.primary",
+                  borderRadius: 0,
+                  px: 2,
+                  py: 1,
+                  fontSize: "0.75rem",
+                }}
+              >
+                Satellite
+              </Button>
+            </Box>
+
+            {/* Scale Bar */}
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 20,
+                left: "50%",
+                transform: "translateX(-50%)",
+                zIndex: 10,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  bgcolor: "background.paper",
+                  px: 1,
+                  py: 0.5,
+                  borderRadius: 1,
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                }}
+              >
+                <Box
+                  sx={{
+                    height: "4px",
+                    width: "50px",
+                    bgcolor: "text.primary",
+                    mr: 0.5,
+                  }}
+                />
+                <Typography variant="caption" sx={{ fontWeight: "500" }}>
+                  500 m
+                </Typography>
+              </Box>
+            </Box>
           </Box>
 
-          <Typography variant="h5" sx={{ fontWeight: "500", mb: 1 }}>
-            {hotel.location.city}, {hotel.location.country}
-          </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography
+            variant="body1"
+            sx={{ mb: 3, color: "text.primary", lineHeight: 1.6 }}
+          >
             {t("common.locationDescription")}
           </Typography>
 
           <Button
             variant="text"
-            sx={{ textTransform: "none", fontWeight: "500" }}
+            sx={{
+              textTransform: "none",
+              fontWeight: "500",
+              color: "booking.main",
+            }}
           >
             {t("common.showMore")} →
           </Button>
@@ -1006,7 +1789,7 @@ function HotelDetail() {
           <Typography
             variant="h4"
             component="h2"
-            sx={{ fontWeight: "500", mb: 4 }}
+            sx={{ fontWeight: "600", mb: 4, color: "booking.dark" }}
           >
             {t("common.morePlacesToStay")}
           </Typography>
@@ -1059,21 +1842,22 @@ function HotelDetail() {
                     >
                       <Typography
                         variant="subtitle1"
-                        sx={{ fontWeight: "500" }}
+                        sx={{ fontWeight: "600", color: "booking.dark" }}
                       >
                         {property.location}
                       </Typography>
                       <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Star sx={{ fontSize: 16, mr: 0.5 }} />
-                        <Typography variant="body2">
+                        <Star
+                          sx={{ fontSize: 16, mr: 0.5, color: "booking.main" }}
+                        />
+                        <Typography variant="body2" sx={{ fontWeight: "600" }}>
                           {property.rating}
                         </Typography>
                       </Box>
                     </Box>
                     <Typography
                       variant="body2"
-                      color="text.secondary"
-                      sx={{ mb: 1 }}
+                      sx={{ mb: 1, color: "text.primary", fontWeight: "500" }}
                     >
                       {property.name}
                     </Typography>
@@ -1084,7 +1868,10 @@ function HotelDetail() {
                     >
                       {t("common.nightsAvailable")}
                     </Typography>
-                    <Typography variant="subtitle1" sx={{ fontWeight: "500" }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: "700", color: "primary.main" }}
+                    >
                       <strong>${property.price}</strong> {t("common.perNight")}
                     </Typography>
                   </CardContent>
@@ -1107,7 +1894,10 @@ function HotelDetail() {
         <Container maxWidth="lg">
           <Grid container spacing={4}>
             <Grid item xs={12} md={3}>
-              <Typography variant="h6" sx={{ fontWeight: "500", mb: 2 }}>
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: "600", mb: 2, color: "booking.dark" }}
+              >
                 {t("common.support")}
               </Typography>
               <Stack spacing={1}>
@@ -1115,7 +1905,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.helpCenter")}
@@ -1124,7 +1918,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.safetyInformation")}
@@ -1133,7 +1931,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.cancellationOptions")}
@@ -1142,7 +1944,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.supportDisabilities")}
@@ -1151,7 +1957,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.reportNeighborhoodConcern")}
@@ -1159,7 +1969,10 @@ function HotelDetail() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Typography variant="h6" sx={{ fontWeight: "500", mb: 2 }}>
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: "600", mb: 2, color: "booking.dark" }}
+              >
                 {t("common.community")}
               </Typography>
               <Stack spacing={1}>
@@ -1167,7 +1980,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.disasterReliefHousing")}
@@ -1176,7 +1993,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.combatingDiscrimination")}
@@ -1184,7 +2005,10 @@ function HotelDetail() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Typography variant="h6" sx={{ fontWeight: "500", mb: 2 }}>
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: "600", mb: 2, color: "booking.dark" }}
+              >
                 {t("common.hosting")}
               </Typography>
               <Stack spacing={1}>
@@ -1192,7 +2016,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.tryHosting")}
@@ -1201,7 +2029,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.airCover")}
@@ -1210,7 +2042,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.exploreHostingResources")}
@@ -1219,7 +2055,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.visitCommunityForum")}
@@ -1228,7 +2068,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.howToHostResponsibly")}
@@ -1236,7 +2080,10 @@ function HotelDetail() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Typography variant="h6" sx={{ fontWeight: "500", mb: 2 }}>
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: "600", mb: 2, color: "booking.dark" }}
+              >
                 {t("common.about")}
               </Typography>
               <Stack spacing={1}>
@@ -1244,7 +2091,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.newsroom")}
@@ -1253,7 +2104,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.learnAboutFeatures")}
@@ -1262,7 +2117,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.careers")}
@@ -1271,7 +2130,11 @@ function HotelDetail() {
                   variant="body2"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.investors")}
@@ -1291,36 +2154,45 @@ function HotelDetail() {
             }}
           >
             <Box>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: "text.primary" }}>
                 © 2023 Hotel Booking, Inc.
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 1 }}>
                 <Typography
                   variant="body2"
-                  color="text.secondary"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.privacy")}
                 </Typography>
                 <Typography
                   variant="body2"
-                  color="text.secondary"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.terms")}
                 </Typography>
                 <Typography
                   variant="body2"
-                  color="text.secondary"
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    color: "text.primary",
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "booking.main",
+                    },
                   }}
                 >
                   {t("common.sitemap")}
@@ -1328,16 +2200,16 @@ function HotelDetail() {
               </Box>
             </Box>
             <Box sx={{ display: "flex", gap: 2, mt: { xs: 2, sm: 0 } }}>
-              <IconButton size="small">
+              <IconButton size="small" sx={{ color: "booking.main" }}>
                 <Instagram />
               </IconButton>
-              <IconButton size="small">
+              <IconButton size="small" sx={{ color: "booking.main" }}>
                 <Facebook />
               </IconButton>
-              <IconButton size="small">
+              <IconButton size="small" sx={{ color: "booking.main" }}>
                 <Twitter />
               </IconButton>
-              <IconButton size="small">
+              <IconButton size="small" sx={{ color: "booking.main" }}>
                 <Pinterest />
               </IconButton>
             </Box>
@@ -1364,10 +2236,13 @@ function HotelDetail() {
               borderColor: "divider",
             }}
           >
-            <IconButton onClick={handleGalleryClose} sx={{ mr: 2 }}>
+            <IconButton
+              onClick={handleGalleryClose}
+              sx={{ mr: 2, color: "booking.dark" }}
+            >
               <Close />
             </IconButton>
-            <Typography>
+            <Typography sx={{ color: "text.primary", fontWeight: "500" }}>
               {selectedImage + 1} / {hotel.images.length}
             </Typography>
           </Box>
@@ -1387,6 +2262,7 @@ function HotelDetail() {
                 position: "absolute",
                 left: 16,
                 bgcolor: "background.paper",
+                color: "booking.dark",
                 "&:hover": { bgcolor: "background.paper" },
               }}
             >
@@ -1407,6 +2283,7 @@ function HotelDetail() {
                 position: "absolute",
                 right: 16,
                 bgcolor: "background.paper",
+                color: "booking.dark",
                 "&:hover": { bgcolor: "background.paper" },
               }}
             >

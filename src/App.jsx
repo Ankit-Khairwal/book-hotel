@@ -31,6 +31,12 @@ const theme = createTheme({
       dark: "#000000",
       contrastText: "#fff",
     },
+    booking: {
+      main: "#4A90E2",
+      light: "#68A5E9",
+      dark: "#3A78C2",
+      contrastText: "#fff",
+    },
     background: {
       default: "#F7F7F7",
       paper: "#FFFFFF",

@@ -55,6 +55,50 @@ const savedProperties = [
     superhost: true,
     category: "castles",
   },
+  {
+    id: 10,
+    name: "Historic Suite",
+    location: "US",
+    price: 450,
+    rating: 4.9,
+    reviews: 78,
+    image: "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310",
+    superhost: true,
+    category: "castles",
+  },
+  {
+    id: 9,
+    name: "Castle Suite",
+    location: "Japan",
+    price: 450,
+    rating: 4.9,
+    reviews: 78,
+    image: "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310",
+    superhost: true,
+    category: "castles",
+  },
+  {
+    id: 8,
+    name: "Manatee Hotel",
+    location: "Russia",
+    price: 450,
+    rating: 4.9,
+    reviews: 78,
+    image: "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310",
+    superhost: true,
+    category: "castles",
+  },
+  {
+    id: 6,
+    name: "Taj Hotel",
+    location: "India",
+    price: 450,
+    rating: 4.9,
+    reviews: 78,
+    image: "https://images.unsplash.com/photo-1533154683836-84ea7a0bc310",
+    superhost: true,
+    category: "castles",
+  },
 ];
 
 function Wishlist() {
@@ -65,12 +109,12 @@ function Wishlist() {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: 6 }}>
+    <Container maxWidth={false} sx={{ py: 6 }}>
       <Typography
         variant="h4"
         component="h1"
         gutterBottom
-        sx={{ mb: 1, fontWeight: "bold" }}
+        sx={{ mb: 1, fontWeight: "bold", color: "primary.main" }}
       >
         Wishlist
       </Typography>

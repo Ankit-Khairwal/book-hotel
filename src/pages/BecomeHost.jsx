@@ -568,7 +568,7 @@ function BecomeHost() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: 6 }}>
+    <Container maxWidth={false} sx={{ py: 6 }}>
       <Paper sx={{ p: 4, borderRadius: 3 }}>
         <Typography
           variant="h4"

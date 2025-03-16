@@ -37,6 +37,24 @@ const allHotels = [
     image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4",
     amenities: ["Skiing", "Restaurant", "Fitness Center"],
   },
+  {
+    id: 3,
+    name: "Hill View Lodge",
+    location: "Swiss Alps",
+    price: 199,
+    rating: 4.5,
+    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4",
+    amenities: ["Skiing", "Restaurant", "Fitness Center"],
+  },
+  {
+    id: 4,
+    name: "Luxury Resort",
+    location: "India",
+    price: 299,
+    rating: 4.8,
+    image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d",
+    amenities: ["Pool", "Spa", "Beach Access", "Restaurant"],
+  },
   // Add more hotels as needed
 ];
 
@@ -92,7 +110,7 @@ function Hotels() {
   }, [searchParams]);
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth={false} sx={{ py: 4 }}>
       <Grid container spacing={3}>
         {/* Filters */}
         <Grid item xs={12} md={3}>
