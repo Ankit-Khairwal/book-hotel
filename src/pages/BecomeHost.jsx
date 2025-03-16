@@ -42,14 +42,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { useAuthContext } from "../context/AuthContext";
 
-const steps = [
-  "Property Type",
-  "Location",
-  "Photos",
-  "Description",
-  "Pricing",
-  "Review",
-];
+const steps = ["Property Type", "Location", "Description", "Pricing", "Review"];
 
 const propertyTypes = [
   { value: "apartment", label: "Apartment" },
@@ -376,116 +369,6 @@ function BecomeHost() {
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
-              Add photos of your property
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Photos help guests imagine staying in your place. You can start
-              with one and add more after you publish.
-            </Typography>
-
-            {uploadError && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {uploadError}
-              </Alert>
-            )}
-
-            <Box
-              sx={{
-                border: "2px dashed #ccc",
-                borderRadius: 2,
-                p: 4,
-                textAlign: "center",
-                bgcolor: "rgba(0,0,0,0.02)",
-                cursor: "pointer",
-                mb: 3,
-              }}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Upload sx={{ fontSize: 48, color: "text.secondary", mb: 2 }} />
-              <Typography variant="body1" gutterBottom>
-                Drag your photos here
-              </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                or
-              </Typography>
-              <Button
-                variant="contained"
-                component="label"
-                startIcon={<PhotoCamera />}
-                sx={{ mt: 1 }}
-                disabled={uploading}
-              >
-                {uploading ? "Uploading..." : "Upload Photos"}
-                <input
-                  type="file"
-                  hidden
-                  multiple
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={handleFileUpload}
-                />
-              </Button>
-              {uploading && (
-                <Box sx={{ width: "100%", mt: 2 }}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    Uploading: {uploadProgress}%
-                  </Typography>
-                  <LinearProgress
-                    variant="determinate"
-                    value={uploadProgress}
-                  />
-                </Box>
-              )}
-            </Box>
-
-            {propertyData.photos.length > 0 && (
-              <Box>
-                <Typography variant="subtitle1" gutterBottom>
-                  Uploaded Photos ({propertyData.photos.length})
-                </Typography>
-                <ImageList cols={3} gap={16}>
-                  {propertyData.photos.map((photo) => (
-                    <ImageListItem key={photo.id} sx={{ position: "relative" }}>
-                      <img
-                        src={photo.url}
-                        alt={photo.name}
-                        loading="lazy"
-                        style={{
-                          borderRadius: 8,
-                          height: 200,
-                          objectFit: "cover",
-                        }}
-                      />
-                      <IconButton
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          bgcolor: "rgba(0,0,0,0.5)",
-                          color: "white",
-                          "&:hover": {
-                            bgcolor: "rgba(255,0,0,0.7)",
-                          },
-                        }}
-                        onClick={() => handleRemovePhoto(photo.id)}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </ImageListItem>
-                  ))}
-                </ImageList>
-              </Box>
-            )}
-          </Box>
-        );
-      case 3:
-        return (
-          <Box>
-            <Typography variant="h6" gutterBottom>
               Tell guests about your place
             </Typography>
             <Grid container spacing={3} sx={{ mt: 1 }}>
@@ -589,7 +472,7 @@ function BecomeHost() {
             </Grid>
           </Box>
         );
-      case 4:
+      case 3:
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
@@ -678,7 +561,7 @@ function BecomeHost() {
             </Box>
           </Box>
         );
-      case 5:
+      case 4:
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
