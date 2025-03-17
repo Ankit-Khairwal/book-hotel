@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Grid,
   Typography,
@@ -193,10 +193,15 @@ const t = (key) => {
 function HotelDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [showFullDescription, setShowFullDescription] = useState(false);
+  const checkInDate = searchParams.get("checkIn") || null;
+  const checkOutDate = searchParams.get("checkOut") || null;
+  const guestCount = searchParams.get("guests")
+    ? parseInt(searchParams.get("guests"), 10)
+    : 1;
 
   // Get hotel data based on id
   const hotel = getPropertyById(id);
@@ -216,11 +221,11 @@ function HotelDetail() {
   };
 
   const handleGalleryOpen = () => {
-    setIsGalleryOpen(true);
+    setGalleryOpen(true);
   };
 
   const handleGalleryClose = () => {
-    setIsGalleryOpen(false);
+    setGalleryOpen(false);
   };
 
   const handleShareClick = () => {
@@ -232,23 +237,19 @@ function HotelDetail() {
     setIsFavorite(!isFavorite);
   };
 
-  const toggleDescription = () => {
-    setShowFullDescription(!showFullDescription);
-  };
-
   const handleShowAllPhotos = () => {
     // Implement the logic to show all photos
     handleGalleryOpen();
   };
 
   const handlePrevImage = () => {
-    setSelectedImage((prev) =>
+    setCurrentImageIndex((prev) =>
       prev === 0 ? hotel.images.length - 1 : prev - 1
     );
   };
 
   const handleNextImage = () => {
-    setSelectedImage((prev) =>
+    setCurrentImageIndex((prev) =>
       prev === hotel.images.length - 1 ? 0 : prev + 1
     );
   };
@@ -286,7 +287,7 @@ function HotelDetail() {
             }}
           >
             <Typography
-              variant="h6"
+              variant="h3"
               sx={{ fontWeight: "600", color: "primary.main" }}
             >
               {hotel.name}
@@ -505,7 +506,6 @@ function HotelDetail() {
                 variant="body2"
                 color="primary"
                 sx={{ cursor: "pointer", mt: 1 }}
-                onClick={toggleDescription}
               >
                 Show more →
               </Typography>
@@ -621,7 +621,13 @@ function HotelDetail() {
                         variant="body2"
                         sx={{ color: "text.primary" }}
                       >
-                        {t("common.addDates")}
+                        {checkInDate && checkOutDate
+                          ? `${new Date(
+                              checkInDate
+                            ).toLocaleDateString()} - ${new Date(
+                              checkOutDate
+                            ).toLocaleDateString()}`
+                          : t("common.addDates")}
                       </Typography>
                     </Box>
                   </Grid>
@@ -637,7 +643,10 @@ function HotelDetail() {
                         variant="body2"
                         sx={{ color: "text.primary" }}
                       >
-                        1 {t("common.guest")}
+                        {guestCount}{" "}
+                        {guestCount === 1
+                          ? t("common.guest")
+                          : t("common.guests")}
                       </Typography>
                     </Box>
                   </Grid>
@@ -675,10 +684,24 @@ function HotelDetail() {
                     variant="body2"
                     sx={{ textDecoration: "underline", color: "text.primary" }}
                   >
-                    ${hotel.price.base} x 5 {t("common.nights")}
+                    ${hotel.price.base} x{" "}
+                    {checkInDate && checkOutDate
+                      ? Math.ceil(
+                          (new Date(checkOutDate) - new Date(checkInDate)) /
+                            (1000 * 60 * 60 * 24)
+                        )
+                      : 5}{" "}
+                    {t("common.nights")}
                   </Typography>
                   <Typography variant="body2" sx={{ color: "text.primary" }}>
-                    ${hotel.price.base * 5}
+                    $
+                    {hotel.price.base *
+                      (checkInDate && checkOutDate
+                        ? Math.ceil(
+                            (new Date(checkOutDate) - new Date(checkInDate)) /
+                              (1000 * 60 * 60 * 24)
+                          )
+                        : 5)}
                   </Typography>
                 </Box>
                 <Box
@@ -733,7 +756,15 @@ function HotelDetail() {
                     variant="subtitle2"
                     sx={{ color: "text.primary" }}
                   >
-                    ${hotel.price.base * 5 + 180}
+                    $
+                    {hotel.price.base *
+                      (checkInDate && checkOutDate
+                        ? Math.ceil(
+                            (new Date(checkOutDate) - new Date(checkInDate)) /
+                              (1000 * 60 * 60 * 24)
+                          )
+                        : 5) +
+                      180}
                   </Typography>
                 </Box>
               </Box>
@@ -2223,7 +2254,7 @@ function HotelDetail() {
       </Box>
 
       {/* Gallery Dialog */}
-      <Dialog fullScreen open={isGalleryOpen} onClose={handleGalleryClose}>
+      <Dialog fullScreen open={galleryOpen} onClose={handleGalleryClose}>
         <Box
           sx={{
             height: "100vh",
@@ -2248,7 +2279,7 @@ function HotelDetail() {
               <Close />
             </IconButton>
             <Typography sx={{ color: "text.primary", fontWeight: "500" }}>
-              {selectedImage + 1} / {hotel.images.length}
+              {currentImageIndex + 1} / {hotel.images.length}
             </Typography>
           </Box>
           <Box
@@ -2274,7 +2305,7 @@ function HotelDetail() {
               <KeyboardArrowLeft />
             </IconButton>
             <img
-              src={hotel.images[selectedImage]}
+              src={hotel.images[currentImageIndex]}
               alt={hotel.name}
               style={{
                 maxWidth: "100%",

@@ -79,6 +79,7 @@ function Hotels() {
     const searchQuery = searchParams.get("search")?.toLowerCase();
     const locationQuery = searchParams.get("location")?.toLowerCase();
     const categoryQuery = searchParams.get("category");
+    const guestCount = searchParams.get("guests");
 
     let filtered = properties.filter((hotel) => {
       // Price filter
@@ -110,12 +111,17 @@ function Hotels() {
         (categoryToPropertyMap[categoryQuery] &&
           hotel.amenities.includes(categoryToPropertyMap[categoryQuery]));
 
+      // Guest count filter
+      const guestMatch =
+        !guestCount || hotel.maxGuests >= parseInt(guestCount, 10);
+
       return (
         priceMatch &&
         amenitiesMatch &&
         searchMatch &&
         locationMatch &&
-        categoryMatch
+        categoryMatch &&
+        guestMatch
       );
     });
 
@@ -138,15 +144,16 @@ function Hotels() {
     const searchQuery = searchParams.get("search");
     const locationQuery = searchParams.get("location");
     const categoryQuery = searchParams.get("category");
+    const guestCount = searchParams.get("guests");
 
-    if (searchQuery || locationQuery || categoryQuery) {
+    if (searchQuery || locationQuery || categoryQuery || guestCount) {
       filterHotels([minPrice, maxPrice], []);
     } else {
       setHotels(initialHotels);
     }
 
     setLoading(false);
-  }, [searchParams, filterHotels]);
+  }, [searchParams]);
 
   // Filters component to reuse in both desktop sidebar and mobile drawer
   const FiltersContent = () => (
@@ -223,6 +230,15 @@ function Hotels() {
                 {searchParams.get("category").charAt(0).toUpperCase() +
                   searchParams.get("category").slice(1)}{" "}
                 Properties
+              </Typography>
+            )}
+
+            {searchParams.get("checkIn") && searchParams.get("checkOut") && (
+              <Typography variant="subtitle1" color="text.secondary">
+                {new Date(searchParams.get("checkIn")).toLocaleDateString()} -{" "}
+                {new Date(searchParams.get("checkOut")).toLocaleDateString()}
+                {searchParams.get("guests") &&
+                  ` · ${searchParams.get("guests")} guests`}
               </Typography>
             )}
           </Box>

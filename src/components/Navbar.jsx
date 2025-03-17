@@ -7,80 +7,27 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  InputBase,
   Button,
   Container,
   Avatar,
   Menu,
   MenuItem,
   Divider,
-  Badge,
-  Tooltip,
-  Paper,
-  ListItemIcon,
+  useMediaQuery,
+  useTheme,
   Drawer,
   List,
   ListItem,
   ListItemText,
   ListItemButton,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
 import {
-  Search as SearchIcon,
   Menu as MenuIcon,
-  FavoriteBorder,
   AccountCircle,
-  Notifications,
-  Login,
-  Person,
-  CalendarMonth,
-  Favorite,
   Logout,
-  LocationOn,
   Close,
 } from "@mui/icons-material";
 import { styled, alpha } from "@mui/material/styles";
-
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: "40px",
-  backgroundColor: theme.palette.common.white,
-  border: "1px solid #DDDDDD",
-  "&:hover": {
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    width: "auto",
-  },
-  transition: "box-shadow 0.2s ease",
-  boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: theme.palette.primary.main,
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: theme.palette.text.primary,
-  width: "100%",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1.5, 1, 1.5, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    [theme.breakpoints.up("md")]: {
-      width: "40ch",
-    },
-  },
-}));
 
 const ProfileButton = styled(Button)(({ theme }) => ({
   borderRadius: "40px",
@@ -98,10 +45,8 @@ function Navbar() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleMenu = (event) => {
@@ -110,16 +55,6 @@ function Navbar() {
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/hotels?search=${encodeURIComponent(searchQuery)}`);
-      if (mobileMenuOpen) {
-        setMobileMenuOpen(false);
-      }
-    }
   };
 
   const toggleMobileMenu = () => {
@@ -173,41 +108,6 @@ function Navbar() {
           >
             HotelBooking
           </Typography>
-
-          {/* Search Bar - Hide on very small screens */}
-          {!isSmall && (
-            <Paper
-              component="form"
-              onSubmit={handleSearch}
-              sx={{
-                p: "2px 4px",
-                display: "flex",
-                alignItems: "center",
-                width: "auto",
-                maxWidth: 600,
-                flex: { xs: "none", md: 1 },
-                mx: { xs: 1, sm: 2, md: 3 },
-                border: "1px solid #ddd",
-                "&:hover": { boxShadow: "0 2px 4px rgba(0,0,0,0.1)" },
-              }}
-            >
-              <IconButton sx={{ p: { xs: "6px", sm: "10px" } }}>
-                <LocationOn />
-              </IconButton>
-              <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                placeholder="Search destinations, hotels..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <IconButton sx={{ p: { xs: "6px", sm: "10px" } }}>
-                <CalendarMonth />
-              </IconButton>
-              <IconButton type="submit" sx={{ p: { xs: "6px", sm: "10px" } }}>
-                <SearchIcon />
-              </IconButton>
-            </Paper>
-          )}
 
           {/* Navigation Items - Desktop */}
           {!isMobile ? (
@@ -308,37 +208,6 @@ function Navbar() {
           )}
         </Container>
       </Toolbar>
-
-      {/* Mobile Search - Only visible on very small screens */}
-      {isSmall && (
-        <Box sx={{ px: 2, pb: 1, bgcolor: "background.paper" }}>
-          <Paper
-            component="form"
-            onSubmit={handleSearch}
-            sx={{
-              p: "2px 4px",
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-              border: "1px solid #ddd",
-              "&:hover": { boxShadow: "0 2px 4px rgba(0,0,0,0.1)" },
-            }}
-          >
-            <IconButton sx={{ p: "6px" }}>
-              <LocationOn />
-            </IconButton>
-            <InputBase
-              sx={{ ml: 1, flex: 1 }}
-              placeholder="Search destinations, hotels..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <IconButton type="submit" sx={{ p: "6px" }}>
-              <SearchIcon />
-            </IconButton>
-          </Paper>
-        </Box>
-      )}
 
       {/* Mobile Menu Drawer */}
       <Drawer

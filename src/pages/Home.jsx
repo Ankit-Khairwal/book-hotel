@@ -20,6 +20,13 @@ import {
   useTheme,
   alpha,
   useMediaQuery,
+  Popover,
+  TextField,
+  MenuItem,
+  Menu,
+  ClickAwayListener,
+  Popper,
+  Grow,
 } from "@mui/material";
 import {
   Search as SearchIcon,
@@ -33,7 +40,12 @@ import {
   Restaurant,
   FitnessCenter,
   KeyboardArrowDown,
+  Add,
+  Remove,
 } from "@mui/icons-material";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { properties } from "../data/properties";
 import PropertyGrid from "../components/PropertyGrid";
 import Footer from "../components/Footer";
@@ -86,8 +98,57 @@ function Home() {
   const [featuredProperties, setFeaturedProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [locationQuery, setLocationQuery] = useState("");
+  const [locationAnchorEl, setLocationAnchorEl] = useState(null);
+  const [availableLocations, setAvailableLocations] = useState([]);
 
-  // Map category IDs to property amenities or types for filtering
+  const [checkInDate, setCheckInDate] = useState(null);
+  const [checkOutDate, setCheckOutDate] = useState(null);
+  const [guestCount, setGuestCount] = useState(1);
+  const [calendarAnchorEl, setCalendarAnchorEl] = useState(null);
+  const [guestAnchorEl, setGuestAnchorEl] = useState(null);
+
+  const openCalendar = Boolean(calendarAnchorEl);
+  const openGuestMenu = Boolean(guestAnchorEl);
+  const openLocation = Boolean(locationAnchorEl);
+
+  const handleCalendarClick = (event) => {
+    setCalendarAnchorEl(event.currentTarget);
+  };
+
+  const handleCalendarClose = () => {
+    setCalendarAnchorEl(null);
+  };
+
+  const handleGuestClick = (event) => {
+    setGuestAnchorEl(event.currentTarget);
+  };
+
+  const handleGuestClose = () => {
+    setGuestAnchorEl(null);
+  };
+
+  const handleGuestIncrement = () => {
+    setGuestCount((prev) => Math.min(prev + 1, 10));
+  };
+
+  const handleGuestDecrement = () => {
+    setGuestCount((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleLocationClick = (event) => {
+    setLocationAnchorEl(event.currentTarget);
+  };
+
+  const handleLocationClose = () => {
+    setLocationAnchorEl(null);
+  };
+
+  const handleLocationSelect = (location) => {
+    setLocationQuery(location);
+    setLocationAnchorEl(null);
+  };
+
   const categoryToPropertyMap = {
     beach: "beachAccess",
     mountain: "mountainView",
@@ -98,19 +159,23 @@ function Home() {
   };
 
   useEffect(() => {
-    // Load featured properties
     setLoading(true);
     setTimeout(() => {
       const featured = properties
         .filter((property) => property.featured)
         .slice(0, 8);
       setFeaturedProperties(featured);
-      setFilteredProperties(featured); // Initialize filtered properties with all featured properties
+      setFilteredProperties(featured);
+      const locations = properties.map(
+        (property) => `${property.location.city}, ${property.location.country}`
+      );
+      const uniqueLocations = [...new Set(locations)];
+      setAvailableLocations(uniqueLocations);
+
       setLoading(false);
     }, 1000);
   }, []);
 
-  // Filter properties when category changes
   useEffect(() => {
     if (selectedCategory === "all") {
       setFilteredProperties(featuredProperties);
@@ -129,19 +194,37 @@ function Home() {
 
   const handleCategoryClick = (categoryId) => {
     if (categoryId === "all") {
-      // Show all properties
       setSelectedCategory("all");
     } else {
-      // Navigate to hotels page with category filter
       navigate(`/hotels?category=${categoryId}`);
     }
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/hotels?search=${encodeURIComponent(searchQuery)}`);
+
+    // Build search params
+    const params = new URLSearchParams();
+
+    if (locationQuery.trim()) {
+      params.append("location", locationQuery.trim());
+    } else if (searchQuery.trim()) {
+      params.append("search", searchQuery.trim());
     }
+
+    if (checkInDate) {
+      params.append("checkIn", checkInDate.toISOString().split("T")[0]);
+    }
+
+    if (checkOutDate) {
+      params.append("checkOut", checkOutDate.toISOString().split("T")[0]);
+    }
+
+    if (guestCount > 1) {
+      params.append("guests", guestCount);
+    }
+
+    navigate(`/hotels?${params.toString()}`);
   };
 
   return (
@@ -240,16 +323,83 @@ function Home() {
                     ? `1px solid ${alpha(theme.palette.divider, 0.5)}`
                     : "none",
                   pb: isSmall ? 1 : 0,
+                  cursor: "pointer",
                 }}
+                onClick={handleLocationClick}
               >
                 <LocationOn sx={{ color: "primary.main", mr: 1 }} />
                 <InputBase
                   sx={{ flex: 1, color: "text.primary" }}
                   placeholder="Where are you going?"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={locationQuery || searchQuery}
+                  onChange={(e) => {
+                    setLocationQuery(e.target.value);
+                    setSearchQuery(e.target.value);
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLocationClick(e);
+                  }}
                 />
               </Box>
+
+              <Popover
+                open={openLocation}
+                anchorEl={locationAnchorEl}
+                onClose={handleLocationClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+              >
+                <Box sx={{ p: 2, width: 300 }}>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Popular Destinations
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      maxHeight: 300,
+                      overflow: "auto",
+                    }}
+                  >
+                    {availableLocations
+                      .filter(
+                        (location) =>
+                          !locationQuery ||
+                          location
+                            .toLowerCase()
+                            .includes(locationQuery.toLowerCase())
+                      )
+                      .map((location) => (
+                        <Box
+                          key={location}
+                          sx={{
+                            p: 1,
+                            cursor: "pointer",
+                            "&:hover": {
+                              bgcolor: "rgba(0, 0, 0, 0.04)",
+                            },
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                          onClick={() => handleLocationSelect(location)}
+                        >
+                          <LocationOn
+                            fontSize="small"
+                            sx={{ mr: 1, color: "text.secondary" }}
+                          />
+                          <Typography variant="body2">{location}</Typography>
+                        </Box>
+                      ))}
+                  </Box>
+                </Box>
+              </Popover>
 
               {!isSmall && (
                 <Divider sx={{ height: 28, mx: 2 }} orientation="vertical" />
@@ -264,16 +414,77 @@ function Home() {
                   mt: isSmall ? 1 : 0,
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                  onClick={handleCalendarClick}
+                >
                   <CalendarMonth sx={{ color: "primary.main", mr: 1 }} />
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ display: { xs: "none", sm: "block" } }}
                   >
-                    Any Week
+                    {checkInDate && checkOutDate
+                      ? `${checkInDate.toLocaleDateString()} - ${checkOutDate.toLocaleDateString()}`
+                      : "Select Dates"}
                   </Typography>
                 </Box>
+
+                <Popover
+                  open={openCalendar}
+                  anchorEl={calendarAnchorEl}
+                  onClose={handleCalendarClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                >
+                  <Box sx={{ p: 2 }}>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 2,
+                        }}
+                      >
+                        <DatePicker
+                          label="Check-in"
+                          value={checkInDate}
+                          onChange={(newValue) => {
+                            setCheckInDate(newValue);
+                          }}
+                          renderInput={(params) => <TextField {...params} />}
+                          minDate={new Date()}
+                        />
+                        <DatePicker
+                          label="Check-out"
+                          value={checkOutDate}
+                          onChange={(newValue) => {
+                            setCheckOutDate(newValue);
+                          }}
+                          renderInput={(params) => <TextField {...params} />}
+                          minDate={checkInDate || new Date()}
+                        />
+                        <Button
+                          variant="contained"
+                          onClick={handleCalendarClose}
+                          fullWidth
+                        >
+                          Apply
+                        </Button>
+                      </Box>
+                    </LocalizationProvider>
+                  </Box>
+                </Popover>
 
                 {!isSmall && (
                   <Divider sx={{ height: 28, mx: 2 }} orientation="vertical" />
@@ -283,13 +494,69 @@ function Home() {
                   sx={{
                     display: { xs: "none", sm: "flex" },
                     alignItems: "center",
+                    cursor: "pointer",
                   }}
+                  onClick={handleGuestClick}
                 >
                   <Person sx={{ color: "primary.main", mr: 1 }} />
                   <Typography variant="body2" color="text.secondary">
-                    Add Guests
+                    {guestCount} {guestCount === 1 ? "Guest" : "Guests"}
                   </Typography>
                 </Box>
+
+                <Popover
+                  open={openGuestMenu}
+                  anchorEl={guestAnchorEl}
+                  onClose={handleGuestClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                >
+                  <Box sx={{ p: 2, width: 250 }}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Guests
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        mb: 2,
+                      }}
+                    >
+                      <Typography>Adults</Typography>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <IconButton
+                          size="small"
+                          onClick={handleGuestDecrement}
+                          disabled={guestCount <= 1}
+                        >
+                          <Remove fontSize="small" />
+                        </IconButton>
+                        <Typography sx={{ mx: 1 }}>{guestCount}</Typography>
+                        <IconButton
+                          size="small"
+                          onClick={handleGuestIncrement}
+                          disabled={guestCount >= 10}
+                        >
+                          <Add fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    </Box>
+                    <Button
+                      variant="contained"
+                      onClick={handleGuestClose}
+                      fullWidth
+                    >
+                      Apply
+                    </Button>
+                  </Box>
+                </Popover>
 
                 <IconButton
                   type="submit"
