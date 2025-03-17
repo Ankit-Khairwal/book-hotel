@@ -127,11 +127,6 @@ const MyBookings = () => {
     console.log("Cancel booking:", bookingId);
   };
 
-  const filteredBookings = bookings.filter((booking) => {
-    if (activeTab === "all") return true;
-    return booking.status === activeTab;
-  });
-
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
@@ -145,174 +140,266 @@ const MyBookings = () => {
     handleCancelBooking(bookingId);
   };
 
-  if (authLoading || loading) {
-    return (
-      <Container sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-        <CircularProgress />
-      </Container>
-    );
-  }
-
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        My Bookings
-      </Typography>
-
-      <Box sx={{ mb: 4 }}>
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{ mb: 3 }}
+    <>
+      {authLoading ? (
+        <Container sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+          <CircularProgress />
+        </Container>
+      ) : (
+        <Box
+          sx={{
+            backgroundColor: "rgba(245, 248, 255, 1)",
+            minHeight: "100vh",
+            pt: 2,
+            pb: 6,
+          }}
         >
-          <Tab label="All" value="all" />
-          <Tab label="Upcoming" value="upcoming" />
-          <Tab label="Completed" value="completed" />
-          <Tab label="Cancelled" value="cancelled" />
-        </Tabs>
-
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : error ? (
-          <Typography color="error" align="center">
-            {error}
-          </Typography>
-        ) : filteredBookings.length === 0 ? (
-          <Box sx={{ textAlign: "center", py: 4 }}>
-            <Typography variant="h6" gutterBottom>
-              {bookings.length === 0
-                ? "You don't have any bookings yet"
-                : `You don't have any ${activeTab} bookings`}
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              component={RouterLink}
-              to="/"
-              sx={{ mt: 2 }}
+          <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{ mb: 3, fontWeight: "bold", color: "primary.main" }}
             >
-              Explore Hotels
-            </Button>
-          </Box>
-        ) : (
-          <Grid container spacing={3}>
-            {filteredBookings.map((booking) => (
-              <Grid item xs={12} key={booking.id}>
-                <Card sx={{ display: "flex", height: "100%" }}>
-                  <CardMedia
-                    component="img"
-                    sx={{ width: 280 }}
-                    image={booking.image}
-                    alt={booking.hotelName}
-                  />
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", flex: 1 }}
-                  >
-                    <CardContent sx={{ flex: "1 0 auto", p: 3 }}>
-                      <Box
+              My Bookings
+            </Typography>
+
+            {error && (
+              <Alert severity="error" sx={{ mb: 3 }}>
+                {error}
+              </Alert>
+            )}
+
+            <Box
+              sx={{
+                mb: 4,
+                bgcolor: "white",
+                borderRadius: 2,
+                p: 2,
+                boxShadow: "0px 2px 8px rgba(0,0,0,0.05)",
+              }}
+            >
+              <Tabs
+                value={activeTab}
+                onChange={handleTabChange}
+                indicatorColor="primary"
+                textColor="primary"
+                variant="fullWidth"
+              >
+                <Tab value="upcoming" label="Upcoming" />
+                <Tab value="completed" label="Completed" />
+                <Tab value="cancelled" label="Cancelled" />
+              </Tabs>
+            </Box>
+
+            {loading ? (
+              <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : bookings.filter((booking) => booking.status === activeTab)
+                .length === 0 ? (
+              <Box
+                sx={{
+                  textAlign: "center",
+                  py: 4,
+                  bgcolor: "white",
+                  borderRadius: 2,
+                  p: 4,
+                  boxShadow: "0px 2px 8px rgba(0,0,0,0.05)",
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  No {activeTab} bookings found
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {activeTab === "upcoming"
+                    ? "You don't have any upcoming bookings."
+                    : activeTab === "completed"
+                    ? "You don't have any completed bookings."
+                    : "You don't have any cancelled bookings."}
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component={RouterLink}
+                  to="/"
+                  sx={{ mt: 2 }}
+                >
+                  Find Hotels
+                </Button>
+              </Box>
+            ) : (
+              <Grid container spacing={3}>
+                {bookings
+                  .filter((booking) => booking.status === activeTab)
+                  .map((booking) => (
+                    <Grid item xs={12} key={booking.id}>
+                      <Card
                         sx={{
                           display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "flex-start",
-                          mb: 2,
+                          height: "100%",
+                          boxShadow: "0px 2px 8px rgba(0,0,0,0.05)",
+                          borderRadius: 2,
+                          overflow: "hidden",
                         }}
                       >
-                        <Typography variant="h5" component="div">
-                          {booking.hotelName}
-                        </Typography>
-                        <Chip
-                          size="small"
-                          color={getStatusColor(booking.status)}
-                          label={
-                            booking.status.charAt(0).toUpperCase() +
-                            booking.status.slice(1)
-                          }
-                          sx={{ ml: "auto" }}
+                        <CardMedia
+                          component="img"
+                          image={booking.image}
+                          alt={booking.hotelName}
+                          sx={{ width: 280 }}
                         />
-                      </Box>
-
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", mb: 2 }}
-                      >
-                        <LocationOn sx={{ mr: 1, color: "text.secondary" }} />
-                        <Typography variant="body2" color="text.secondary">
-                          {booking.location}
-                        </Typography>
-                      </Box>
-
-                      <Grid container spacing={2} sx={{ mb: 2 }}>
-                        <Grid item xs={12} sm={6}>
-                          <Typography variant="body2" color="text.secondary">
-                            Check-in
-                          </Typography>
-                          <Typography variant="body1">
-                            {formatDate(booking.checkIn)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <Typography variant="body2" color="text.secondary">
-                            Check-out
-                          </Typography>
-                          <Typography variant="body1">
-                            {formatDate(booking.checkOut)}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-
-                      <Typography
-                        variant="subtitle1"
-                        sx={{ fontWeight: "bold", mb: 1 }}
-                      >
-                        Total: ${booking.totalPrice}
-                      </Typography>
-
-                      <Box sx={{ display: "flex", gap: 2 }}>
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          component={RouterLink}
-                          to={`/booking/${booking.id}`}
-                          startIcon={<Visibility />}
-                          sx={{ mr: 1 }}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            flex: 1,
+                          }}
                         >
-                          View Details
-                        </Button>
-                        {booking.status === "completed" && !booking.rating && (
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            startIcon={<RateReview />}
-                            onClick={() => handleReviewClick(booking.id)}
-                            sx={{ mr: 1 }}
-                          >
-                            Leave Review
-                          </Button>
-                        )}
-                        {booking.status === "upcoming" && (
-                          <Button
-                            variant="outlined"
-                            color="error"
-                            size="small"
-                            startIcon={<Cancel />}
-                            onClick={() => handleCancelClick(booking.id)}
-                          >
-                            Cancel Booking
-                          </Button>
-                        )}
-                      </Box>
-                    </CardContent>
-                  </Box>
-                </Card>
+                          <CardContent sx={{ flex: "1 0 auto", p: 3 }}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "flex-start",
+                                mb: 2,
+                              }}
+                            >
+                              <Typography variant="h5" component="h2">
+                                {booking.hotelName}
+                              </Typography>
+                              <Chip
+                                label={
+                                  booking.status.charAt(0).toUpperCase() +
+                                  booking.status.slice(1)
+                                }
+                                color={getStatusColor(booking.status)}
+                                size="small"
+                                sx={{ ml: "auto" }}
+                              />
+                            </Box>
+
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                mb: 2,
+                              }}
+                            >
+                              <LocationOn
+                                sx={{ mr: 1, color: "text.secondary" }}
+                              />
+                              <Typography
+                                variant="body1"
+                                color="text.secondary"
+                              >
+                                {booking.location}
+                              </Typography>
+                            </Box>
+
+                            <Grid container spacing={2} sx={{ mb: 2 }}>
+                              <Grid item xs={12} sm={6}>
+                                <Typography
+                                  variant="body2"
+                                  color="text.secondary"
+                                  gutterBottom
+                                >
+                                  Check-in
+                                </Typography>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <CalendarMonth
+                                    fontSize="small"
+                                    sx={{ mr: 1, color: "text.secondary" }}
+                                  />
+                                  <Typography variant="body1">
+                                    {formatDate(booking.checkIn)}
+                                  </Typography>
+                                </Box>
+                              </Grid>
+                              <Grid item xs={12} sm={6}>
+                                <Typography
+                                  variant="body2"
+                                  color="text.secondary"
+                                  gutterBottom
+                                >
+                                  Check-out
+                                </Typography>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <CalendarMonth
+                                    fontSize="small"
+                                    sx={{ mr: 1, color: "text.secondary" }}
+                                  />
+                                  <Typography variant="body1">
+                                    {formatDate(booking.checkOut)}
+                                  </Typography>
+                                </Box>
+                              </Grid>
+                            </Grid>
+
+                            <Typography
+                              variant="h6"
+                              sx={{ fontWeight: "bold", mb: 1 }}
+                            >
+                              Total: ${booking.totalPrice}
+                            </Typography>
+
+                            <Box sx={{ display: "flex", gap: 2 }}>
+                              <Button
+                                variant="outlined"
+                                color="primary"
+                                startIcon={<Visibility />}
+                                component={RouterLink}
+                                to={`/booking/${booking.id}`}
+                                sx={{ mr: 1 }}
+                              >
+                                View Details
+                              </Button>
+                              {booking.status === "upcoming" && (
+                                <Button
+                                  variant="outlined"
+                                  color="error"
+                                  startIcon={<Cancel />}
+                                  onClick={() => handleCancelClick(booking.id)}
+                                  sx={{ mr: 1 }}
+                                >
+                                  Cancel
+                                </Button>
+                              )}
+                              {booking.status === "completed" &&
+                                !booking.rating && (
+                                  <Button
+                                    variant="outlined"
+                                    color="secondary"
+                                    startIcon={<RateReview />}
+                                    onClick={() =>
+                                      handleReviewClick(booking.id)
+                                    }
+                                  >
+                                    Leave Review
+                                  </Button>
+                                )}
+                            </Box>
+                          </CardContent>
+                        </Box>
+                      </Card>
+                    </Grid>
+                  ))}
               </Grid>
-            ))}
-          </Grid>
-        )}
-      </Box>
-    </Container>
+            )}
+          </Container>
+        </Box>
+      )}
+    </>
   );
 };
 
