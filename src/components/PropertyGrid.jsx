@@ -1,9 +1,14 @@
-import { Grid, Box, Typography, CircularProgress } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Typography,
+  CircularProgress,
+  useMediaQuery,
+} from "@mui/material";
 import PropertyCard from "./PropertyCard";
-import { useTranslation } from "react-i18next";
 
 function PropertyGrid({ properties, loading, error }) {
-  const { t } = useTranslation();
+  const isExtraSmall = useMediaQuery("(max-width:480px)");
 
   if (loading) {
     return (
@@ -12,10 +17,10 @@ function PropertyGrid({ properties, loading, error }) {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "400px",
+          minHeight: { xs: "200px", sm: "300px", md: "400px" },
         }}
       >
-        <CircularProgress />
+        <CircularProgress size={isExtraSmall ? 30 : 40} />
       </Box>
     );
   }
@@ -27,10 +32,14 @@ function PropertyGrid({ properties, loading, error }) {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "400px",
+          minHeight: { xs: "200px", sm: "300px", md: "400px" },
+          px: 2,
+          textAlign: "center",
         }}
       >
-        <Typography color="error">{error}</Typography>
+        <Typography color="error" variant={isExtraSmall ? "body2" : "body1"}>
+          {error}
+        </Typography>
       </Box>
     );
   }
@@ -42,20 +51,36 @@ function PropertyGrid({ properties, loading, error }) {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "400px",
+          minHeight: { xs: "200px", sm: "300px", md: "400px" },
+          px: 2,
+          textAlign: "center",
         }}
       >
-        <Typography variant="h6" color="text.secondary">
-          {t("common.noResults")}
+        <Typography
+          variant={isExtraSmall ? "body1" : "h6"}
+          color="text.secondary"
+        >
+          No results found
         </Typography>
       </Box>
     );
   }
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={{ xs: 2, sm: 2, md: 3 }}>
       {properties.map((property) => (
-        <Grid item key={property.id} xs={12} sm={6} md={4} lg={3}>
+        <Grid
+          item
+          key={property.id}
+          xs={12}
+          sm={6}
+          md={4}
+          lg={3}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <PropertyCard property={property} />
         </Grid>
       ))}

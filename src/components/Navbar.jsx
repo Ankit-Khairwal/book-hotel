@@ -18,10 +18,16 @@ import {
   Tooltip,
   Paper,
   ListItemIcon,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemButton,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import {
   Search as SearchIcon,
-  Language,
   Menu as MenuIcon,
   FavoriteBorder,
   AccountCircle,
@@ -32,10 +38,9 @@ import {
   Favorite,
   Logout,
   LocationOn,
+  Close,
 } from "@mui/icons-material";
 import { styled, alpha } from "@mui/material/styles";
-import { useTranslation } from "react-i18next";
-import LanguageSelector from "./LanguageSelector";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -89,11 +94,15 @@ const ProfileButton = styled(Button)(({ theme }) => ({
 }));
 
 function Navbar() {
-  const { t } = useTranslation();
   const { user, logout } = useAuthContext();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -107,19 +116,46 @@ function Navbar() {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/hotels?search=${encodeURIComponent(searchQuery)}`);
+      if (mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
     }
   };
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const mobileMenuItems = [
+    { text: "Become a Host", onClick: () => navigate("/become-host") },
+    ...(user
+      ? [
+          { text: "Profile", onClick: () => navigate("/profile") },
+          { text: "My Bookings", onClick: () => navigate("/my-bookings") },
+          { text: "Wishlist", onClick: () => navigate("/wishlist") },
+          { text: "Logout", onClick: logout },
+        ]
+      : [
+          { text: "Login", onClick: () => navigate("/login") },
+          { text: "Sign Up", onClick: () => navigate("/signup") },
+        ]),
+  ];
+
   return (
     <AppBar position="sticky" color="inherit" elevation={1}>
-      <Toolbar sx={{ justifyContent: "space-between" }}>
+      <Toolbar
+        sx={{
+          justifyContent: "space-between",
+          minHeight: { xs: "56px", sm: "64px" },
+        }}
+      >
         <Container
           maxWidth={false}
           sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            px: 2,
+            px: { xs: 1, sm: 2 },
           }}
         >
           {/* Logo */}
@@ -130,13 +166,152 @@ function Navbar() {
               cursor: "pointer",
               color: "primary.main",
               fontWeight: "bold",
+              fontSize: { xs: "1.1rem", sm: "1.25rem" },
+              flexShrink: 0,
             }}
             onClick={() => navigate("/")}
           >
             HotelBooking
           </Typography>
 
-          {/* Search Bar */}
+          {/* Search Bar - Hide on very small screens */}
+          {!isSmall && (
+            <Paper
+              component="form"
+              onSubmit={handleSearch}
+              sx={{
+                p: "2px 4px",
+                display: "flex",
+                alignItems: "center",
+                width: "auto",
+                maxWidth: 600,
+                flex: { xs: "none", md: 1 },
+                mx: { xs: 1, sm: 2, md: 3 },
+                border: "1px solid #ddd",
+                "&:hover": { boxShadow: "0 2px 4px rgba(0,0,0,0.1)" },
+              }}
+            >
+              <IconButton sx={{ p: { xs: "6px", sm: "10px" } }}>
+                <LocationOn />
+              </IconButton>
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Search destinations, hotels..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <IconButton sx={{ p: { xs: "6px", sm: "10px" } }}>
+                <CalendarMonth />
+              </IconButton>
+              <IconButton type="submit" sx={{ p: { xs: "6px", sm: "10px" } }}>
+                <SearchIcon />
+              </IconButton>
+            </Paper>
+          )}
+
+          {/* Navigation Items - Desktop */}
+          {!isMobile ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: { xs: 1, sm: 2 },
+              }}
+            >
+              <Button
+                color="inherit"
+                onClick={() => navigate("/become-host")}
+                sx={{ display: { xs: "none", sm: "flex" } }}
+              >
+                Become a Host
+              </Button>
+
+              {user ? (
+                <>
+                  <IconButton
+                    onClick={handleMenu}
+                    color="inherit"
+                    sx={{ ml: { xs: 1, sm: 2 } }}
+                  >
+                    {user.photoURL ? (
+                      <Avatar
+                        src={user.photoURL}
+                        alt={user.displayName}
+                        sx={{ width: 32, height: 32 }}
+                      />
+                    ) : (
+                      <AccountCircle />
+                    )}
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    onClick={handleClose}
+                    PaperProps={{
+                      sx: {
+                        mt: 1.5,
+                        width: 200,
+                      },
+                    }}
+                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                  >
+                    <MenuItem onClick={() => navigate("/profile")}>
+                      Profile
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate("/my-bookings")}>
+                      My Bookings
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate("/wishlist")}>
+                      Wishlist
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={logout}>Logout</MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <>
+                  <Button
+                    color="inherit"
+                    onClick={() => navigate("/login")}
+                    sx={{ display: { xs: "none", sm: "flex" } }}
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={() => navigate("/signup")}
+                    sx={{
+                      display: { xs: "none", sm: "flex" },
+                      px: { xs: 1.5, sm: 2 },
+                      py: { xs: 0.5, sm: 0.75 },
+                    }}
+                  >
+                    Sign Up
+                  </Button>
+                </>
+              )}
+            </Box>
+          ) : (
+            // Mobile menu button
+            <IconButton
+              edge="end"
+              color="inherit"
+              aria-label="menu"
+              onClick={toggleMobileMenu}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+        </Container>
+      </Toolbar>
+
+      {/* Mobile Search - Only visible on very small screens */}
+      {isSmall && (
+        <Box sx={{ px: 2, pb: 1, bgcolor: "background.paper" }}>
           <Paper
             component="form"
             onSubmit={handleSearch}
@@ -144,86 +319,67 @@ function Navbar() {
               p: "2px 4px",
               display: "flex",
               alignItems: "center",
-              width: "auto",
-              maxWidth: 600,
-              flex: 1,
-              mx: 3,
+              width: "100%",
               border: "1px solid #ddd",
               "&:hover": { boxShadow: "0 2px 4px rgba(0,0,0,0.1)" },
             }}
           >
-            <IconButton sx={{ p: "10px" }}>
+            <IconButton sx={{ p: "6px" }}>
               <LocationOn />
             </IconButton>
             <InputBase
               sx={{ ml: 1, flex: 1 }}
-              placeholder={t("nav.searchPlaceholder")}
+              placeholder="Search destinations, hotels..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <IconButton sx={{ p: "10px" }}>
-              <CalendarMonth />
-            </IconButton>
-            <IconButton type="submit" sx={{ p: "10px" }}>
+            <IconButton type="submit" sx={{ p: "6px" }}>
               <SearchIcon />
             </IconButton>
           </Paper>
+        </Box>
+      )}
 
-          {/* Navigation Items */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Button color="inherit" onClick={() => navigate("/become-host")}>
-              {t("nav.becomeHost")}
-            </Button>
-
-            {/* Language Selector */}
-            <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>
-              <LanguageSelector />
-            </Box>
-
-            {user ? (
-              <>
-                <IconButton onClick={handleMenu} color="inherit" sx={{ ml: 2 }}>
-                  {user.photoURL ? (
-                    <Avatar src={user.photoURL} alt={user.displayName} />
-                  ) : (
-                    <AccountCircle />
-                  )}
-                </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                  onClick={handleClose}
-                >
-                  <MenuItem onClick={() => navigate("/profile")}>
-                    {t("nav.profile")}
-                  </MenuItem>
-                  <MenuItem onClick={() => navigate("/my-bookings")}>
-                    {t("nav.myBookings")}
-                  </MenuItem>
-                  <MenuItem onClick={() => navigate("/wishlist")}>
-                    {t("nav.wishlist")}
-                  </MenuItem>
-                  <MenuItem onClick={logout}>{t("nav.logout")}</MenuItem>
-                </Menu>
-              </>
-            ) : (
-              <>
-                <Button color="inherit" onClick={() => navigate("/login")}>
-                  {t("nav.login")}
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate("/signup")}
-                >
-                  {t("nav.signup")}
-                </Button>
-              </>
-            )}
-          </Box>
-        </Container>
-      </Toolbar>
+      {/* Mobile Menu Drawer */}
+      <Drawer
+        anchor="right"
+        open={mobileMenuOpen}
+        onClose={toggleMobileMenu}
+        PaperProps={{
+          sx: { width: { xs: "100%", sm: 300 } },
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6" color="primary.main" fontWeight="bold">
+            HotelBooking
+          </Typography>
+          <IconButton onClick={toggleMobileMenu}>
+            <Close />
+          </IconButton>
+        </Box>
+        <Divider />
+        <List>
+          {mobileMenuItems.map((item, index) => (
+            <ListItem key={index} disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  item.onClick();
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
     </AppBar>
   );
 }

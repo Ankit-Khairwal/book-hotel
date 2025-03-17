@@ -1,6 +1,11 @@
 import { Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ThemeProvider, createTheme, CircularProgress } from "@mui/material";
+import {
+  ThemeProvider,
+  createTheme,
+  CircularProgress,
+  responsiveFontSizes,
+} from "@mui/material";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -14,10 +19,9 @@ import BecomeHost from "./pages/BecomeHost";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
-import "./i18n/config";
 import "./App.css";
 
-const theme = createTheme({
+let theme = createTheme({
   palette: {
     primary: {
       main: "#FF385C",
@@ -51,21 +55,57 @@ const theme = createTheme({
       'Circular, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
     h1: {
       fontWeight: 700,
+      fontSize: "2.5rem",
+      "@media (min-width:600px)": {
+        fontSize: "3rem",
+      },
+      "@media (min-width:960px)": {
+        fontSize: "3.5rem",
+      },
     },
     h2: {
       fontWeight: 700,
+      fontSize: "2rem",
+      "@media (min-width:600px)": {
+        fontSize: "2.5rem",
+      },
+      "@media (min-width:960px)": {
+        fontSize: "3rem",
+      },
     },
     h3: {
       fontWeight: 600,
+      fontSize: "1.75rem",
+      "@media (min-width:600px)": {
+        fontSize: "2rem",
+      },
+      "@media (min-width:960px)": {
+        fontSize: "2.25rem",
+      },
     },
     h4: {
       fontWeight: 600,
+      fontSize: "1.5rem",
+      "@media (min-width:600px)": {
+        fontSize: "1.75rem",
+      },
+      "@media (min-width:960px)": {
+        fontSize: "2rem",
+      },
     },
     h5: {
       fontWeight: 500,
+      fontSize: "1.25rem",
+      "@media (min-width:600px)": {
+        fontSize: "1.5rem",
+      },
     },
     h6: {
       fontWeight: 500,
+      fontSize: "1.1rem",
+      "@media (min-width:600px)": {
+        fontSize: "1.25rem",
+      },
     },
     button: {
       textTransform: "none",
@@ -75,16 +115,24 @@ const theme = createTheme({
   shape: {
     borderRadius: 12,
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1920,
+    },
+  },
   components: {
-    MuiButton: {
+    MuiContainer: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          padding: "10px 16px",
-        },
-        containedPrimary: {
-          "&:hover": {
-            backgroundColor: "#E31C5F",
+          paddingLeft: "16px",
+          paddingRight: "16px",
+          "@media (min-width:600px)": {
+            paddingLeft: "24px",
+            paddingRight: "24px",
           },
         },
       },
@@ -92,62 +140,53 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
-          boxShadow: "0 6px 16px rgba(0, 0, 0, 0.08)",
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12,
+          overflow: "hidden",
         },
       },
     },
   },
 });
 
-function LoadingSpinner() {
-  return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <CircularProgress />
-    </div>
-  );
-}
+// Apply responsive font sizes
+theme = responsiveFontSizes(theme);
 
 function App() {
   return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <ThemeProvider theme={theme}>
-        <AuthProvider>
-          <Router>
-            <div className="app">
-              <Navbar />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/hotels" element={<Hotels />} />
-                <Route path="/hotels/:id" element={<HotelDetail />} />
-                <Route path="/booking/:id" element={<Booking />} />
-                <Route path="/wishlist" element={<Wishlist />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/my-bookings" element={<MyBookings />} />
-                <Route path="/become-host" element={<BecomeHost />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-              </Routes>
-            </div>
-          </Router>
-        </AuthProvider>
-      </ThemeProvider>
-    </Suspense>
+    <ThemeProvider theme={theme}>
+      <AuthProvider>
+        <Router>
+          <Navbar />
+          <Suspense
+            fallback={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100vh",
+                }}
+              >
+                <CircularProgress />
+              </div>
+            }
+          >
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/hotels" element={<Hotels />} />
+              <Route path="/hotels/:id" element={<HotelDetail />} />
+              <Route path="/booking/:id" element={<Booking />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/my-bookings" element={<MyBookings />} />
+              <Route path="/become-host" element={<BecomeHost />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+            </Routes>
+          </Suspense>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

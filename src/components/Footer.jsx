@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import {
   Box,
   Container,
@@ -33,10 +32,8 @@ import {
   Email,
   AccessTime,
 } from "@mui/icons-material";
-import LanguageSelector from "./LanguageSelector";
 
 const Footer = () => {
-  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   // Payment methods
@@ -176,20 +173,20 @@ const Footer = () => {
                   },
                 }}
               >
-                {t("common.subscribeNewsletter")}
+                Subscribe Newsletter
               </Typography>
               <Typography
                 variant="body2"
                 color="text.primary"
                 sx={{ fontWeight: "500" }}
               >
-                {t("common.subscribeDescription")}
+                Subscribe description
               </Typography>
             </Grid>
             <Grid item xs={12} md={5}>
               <TextField
                 fullWidth
-                placeholder={t("common.enterEmail")}
+                placeholder="Enter email"
                 variant="outlined"
                 size="small"
                 sx={{
@@ -247,98 +244,95 @@ const Footer = () => {
         >
           <Grid item xs={12} md={3}>
             <Typography variant="h6" sx={interactiveHeadingStyle}>
-              {t("common.support")}
+              Support
             </Typography>
             <Stack spacing={1} sx={{ "& .MuiLink-root": interactiveLinkStyle }}>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.helpCenter")}
+                Help Center
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.safetyInformation")}
+                Safety Information
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.cancellationOptions")}
+                Cancellation Options
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.supportDisabilities")}
+                COVID-19 Response
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.reportNeighborhoodConcern")}
-              </Link>
-              <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.covid19Resources")}
+                Report Neighborhood Concern
               </Link>
             </Stack>
           </Grid>
           <Grid item xs={12} md={3}>
             <Typography variant="h6" sx={interactiveHeadingStyle}>
-              {t("common.community")}
+              Community
             </Typography>
             <Stack spacing={1} sx={{ "& .MuiLink-root": interactiveLinkStyle }}>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.disasterReliefHousing")}
+                Disaster Relief Housing
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.combatingDiscrimination")}
+                Combating Discrimination
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.communityForum")}
+                Community Forum
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.referFriend")}
+                Refer Friend
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.giftCards")}
+                Gift Cards
               </Link>
             </Stack>
           </Grid>
           <Grid item xs={12} md={3}>
             <Typography variant="h6" sx={interactiveHeadingStyle}>
-              {t("common.hosting")}
+              Hosting
             </Typography>
             <Stack spacing={1} sx={{ "& .MuiLink-root": interactiveLinkStyle }}>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.tryHosting")}
+                Try Hosting
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.airCover")}
+                Air Cover
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.exploreHostingResources")}
+                Explore Hosting Resources
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.visitCommunityForum")}
+                Visit Community Forum
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.howToHostResponsibly")}
+                How to Host Responsibly
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.hostInsurance")}
+                Host Insurance
               </Link>
             </Stack>
           </Grid>
           <Grid item xs={12} md={3}>
             <Typography variant="h6" sx={interactiveHeadingStyle}>
-              {t("common.about")}
+              About
             </Typography>
             <Stack spacing={1} sx={{ "& .MuiLink-root": interactiveLinkStyle }}>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.newsroom")}
+                Newsroom
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.learnAboutFeatures")}
+                Learn About Features
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.careers")}
+                Careers
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.investors")}
+                Investors
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.sustainability")}
+                Sustainability
               </Link>
               <Link href="#" underline="hover" color="inherit" variant="body2">
-                {t("common.partnerPrograms")}
+                Partner Programs
               </Link>
             </Stack>
           </Grid>
@@ -358,7 +352,7 @@ const Footer = () => {
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
               <Typography variant="h6" sx={interactiveHeadingStyle}>
-                {t("common.contactUs")}
+                Contact Us
               </Typography>
               <Stack spacing={2}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -386,7 +380,7 @@ const Footer = () => {
                       },
                     }}
                   >
-                    {t("common.getDirections")}
+                    Get Directions
                   </Button>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -407,7 +401,7 @@ const Footer = () => {
             </Grid>
             <Grid item xs={12} md={4}>
               <Typography variant="h6" sx={interactiveHeadingStyle}>
-                {t("common.destinations")}
+                Destinations
               </Typography>
               <Grid container spacing={1}>
                 {[
@@ -438,15 +432,13 @@ const Footer = () => {
             </Grid>
             <Grid item xs={12} md={4}>
               <Typography variant="h6" sx={interactiveHeadingStyle}>
-                {t("common.securePayments")}
+                Secure Payments
               </Typography>
               <Box
                 sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
               >
                 <Security color="primary" />
-                <Typography variant="body2">
-                  {t("common.secureTransactions")}
-                </Typography>
+                <Typography variant="body2">Secure transactions</Typography>
               </Box>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {paymentMethods.map((method) => (
@@ -480,7 +472,6 @@ const Footer = () => {
         >
           <Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-              <LanguageSelector />
               <Button
                 startIcon={<CurrencyExchange />}
                 sx={{ textTransform: "none" }}
@@ -493,8 +484,7 @@ const Footer = () => {
               color="primary.main"
               sx={{ fontWeight: "bold" }}
             >
-              © {currentYear} Hotel Booking, Inc.{" "}
-              {t("common.allRightsReserved")}
+              © {currentYear} Hotel Booking, Inc. All rights reserved.
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 1 }}>
               <Link
@@ -504,7 +494,7 @@ const Footer = () => {
                 variant="body2"
                 sx={interactiveLinkStyle}
               >
-                {t("common.privacy")}
+                Privacy
               </Link>
               <Link
                 href="#"
@@ -513,7 +503,7 @@ const Footer = () => {
                 variant="body2"
                 sx={interactiveLinkStyle}
               >
-                {t("common.terms")}
+                Terms
               </Link>
               <Link
                 href="#"
@@ -522,7 +512,7 @@ const Footer = () => {
                 variant="body2"
                 sx={interactiveLinkStyle}
               >
-                {t("common.sitemap")}
+                Sitemap
               </Link>
               <Link
                 href="#"
@@ -531,7 +521,7 @@ const Footer = () => {
                 variant="body2"
                 sx={interactiveLinkStyle}
               >
-                {t("common.cookiePolicy")}
+                Cookie Policy
               </Link>
               <Link
                 href="#"
@@ -540,7 +530,7 @@ const Footer = () => {
                 variant="body2"
                 sx={interactiveLinkStyle}
               >
-                {t("common.accessibility")}
+                Accessibility
               </Link>
             </Box>
           </Box>

@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import {
   Container,
   Typography,
@@ -20,6 +19,7 @@ import {
   Divider,
   useTheme,
   alpha,
+  useMediaQuery,
 } from "@mui/material";
 import {
   Search as SearchIcon,
@@ -78,9 +78,9 @@ const categories = [
 ];
 
 function Home() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [featuredProperties, setFeaturedProperties] = useState([]);
@@ -150,7 +150,7 @@ function Home() {
       <Box
         sx={{
           position: "relative",
-          height: { xs: "70vh", md: "85vh" },
+          height: { xs: "60vh", sm: "70vh", md: "85vh" },
           width: "100%",
           overflow: "hidden",
           "&::before": {
@@ -180,7 +180,8 @@ function Home() {
               justifyContent: "center",
               color: "white",
               textAlign: { xs: "center", md: "left" },
-              maxWidth: { xs: "100%", md: "50%" },
+              maxWidth: { xs: "100%", sm: "80%", md: "60%", lg: "50%" },
+              px: { xs: 2, sm: 0 },
             }}
           >
             <Typography
@@ -188,20 +189,27 @@ function Home() {
               component="h1"
               sx={{
                 fontWeight: 800,
-                mb: 2,
+                mb: { xs: 1, sm: 2 },
                 textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                fontSize: {
+                  xs: "2rem",
+                  sm: "2.5rem",
+                  md: "3rem",
+                  lg: "3.5rem",
+                },
               }}
             >
-              {t("home.heroTitle")}
+              Find Your Perfect Stay
             </Typography>
             <Typography
               variant="h5"
               sx={{
-                mb: 4,
+                mb: { xs: 3, sm: 4 },
                 textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+                fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
               }}
             >
-              {t("home.heroSubtitle")}
+              Discover amazing places at exclusive deals
             </Typography>
 
             {/* Search Box */}
@@ -210,73 +218,114 @@ function Home() {
               onSubmit={handleSearch}
               elevation={3}
               sx={{
-                p: "8px 16px",
+                p: { xs: "6px 12px", sm: "8px 16px" },
                 display: "flex",
                 alignItems: "center",
-                borderRadius: 8,
+                borderRadius: { xs: 4, sm: 8 },
                 backgroundColor: alpha("#fff", 0.95),
                 backdropFilter: "blur(4px)",
                 maxWidth: { xs: "100%", md: "600px" },
                 mx: { xs: "auto", md: 0 },
+                flexDirection: { xs: isSmall ? "column" : "row", sm: "row" },
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flex: 1,
+                  width: isSmall ? "100%" : "auto",
+                  mb: isSmall ? 1 : 0,
+                  borderBottom: isSmall
+                    ? `1px solid ${alpha(theme.palette.divider, 0.5)}`
+                    : "none",
+                  pb: isSmall ? 1 : 0,
+                }}
+              >
                 <LocationOn sx={{ color: "primary.main", mr: 1 }} />
                 <InputBase
                   sx={{ flex: 1, color: "text.primary" }}
-                  placeholder={t("home.searchPlaceholder")}
+                  placeholder="Where are you going?"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </Box>
-              <Divider sx={{ height: 28, mx: 2 }} orientation="vertical" />
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <CalendarMonth sx={{ color: "primary.main", mr: 1 }} />
-                <Typography variant="body2" color="text.secondary">
-                  {t("home.anyWeek")}
-                </Typography>
-              </Box>
-              <Divider sx={{ height: 28, mx: 2 }} orientation="vertical" />
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Person sx={{ color: "primary.main", mr: 1 }} />
-                <Typography variant="body2" color="text.secondary">
-                  {t("home.addGuests")}
-                </Typography>
-              </Box>
-              <IconButton
-                type="submit"
+
+              {!isSmall && (
+                <Divider sx={{ height: 28, mx: 2 }} orientation="vertical" />
+              )}
+
+              <Box
                 sx={{
-                  p: "10px",
-                  ml: 1,
-                  bgcolor: "primary.main",
-                  color: "white",
-                  "&:hover": { bgcolor: "primary.dark" },
+                  display: "flex",
+                  alignItems: "center",
+                  width: isSmall ? "100%" : "auto",
+                  justifyContent: isSmall ? "space-between" : "flex-start",
+                  mt: isSmall ? 1 : 0,
                 }}
               >
-                <SearchIcon />
-              </IconButton>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <CalendarMonth sx={{ color: "primary.main", mr: 1 }} />
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ display: { xs: "none", sm: "block" } }}
+                  >
+                    Any Week
+                  </Typography>
+                </Box>
+
+                {!isSmall && (
+                  <Divider sx={{ height: 28, mx: 2 }} orientation="vertical" />
+                )}
+
+                <Box
+                  sx={{
+                    display: { xs: "none", sm: "flex" },
+                    alignItems: "center",
+                  }}
+                >
+                  <Person sx={{ color: "primary.main", mr: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    Add Guests
+                  </Typography>
+                </Box>
+
+                <IconButton
+                  type="submit"
+                  sx={{
+                    p: { xs: "8px", sm: "10px" },
+                    ml: { xs: 0, sm: 1 },
+                    bgcolor: "primary.main",
+                    color: "white",
+                    "&:hover": { bgcolor: "primary.dark" },
+                  }}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </Box>
             </Paper>
           </Box>
         </Container>
       </Box>
 
       {/* Categories */}
-      <Container maxWidth={false} sx={{ mt: 4 }}>
+      <Container maxWidth={false} sx={{ mt: { xs: 2, sm: 4 } }}>
         <Tabs
           value={selectedCategory}
           onChange={handleCategoryChange}
           variant="scrollable"
           scrollButtons="auto"
           sx={{
-            mb: 4,
+            mb: { xs: 2, sm: 4 },
             "& .MuiTab-root": {
               minWidth: "auto",
-              px: 2,
-              py: 1,
-              mr: 1,
+              px: { xs: 1.5, sm: 2 },
+              py: { xs: 0.75, sm: 1 },
+              mr: { xs: 0.5, sm: 1 },
               borderRadius: 2,
               textTransform: "none",
-              fontSize: "0.9rem",
+              fontSize: { xs: "0.8rem", sm: "0.9rem" },
               fontWeight: 500,
               color: "text.primary",
               "&.Mui-selected": {
@@ -295,8 +344,14 @@ function Home() {
               value={category.id}
               label={
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  {category.icon && <Box sx={{ mr: 1 }}>{category.icon}</Box>}
-                  {t(`categories.${category.id}`)}
+                  {category.icon && (
+                    <Box sx={{ mr: { xs: 0.5, sm: 1 }, display: "flex" }}>
+                      {React.cloneElement(category.icon, {
+                        fontSize: isSmall ? "small" : "medium",
+                      })}
+                    </Box>
+                  )}
+                  {category.label}
                 </Box>
               }
               onClick={() => handleCategoryClick(category.id)}
@@ -305,36 +360,46 @@ function Home() {
         </Tabs>
 
         {/* Featured Properties */}
-        <Box sx={{ mb: 8 }}>
+        <Box sx={{ mb: { xs: 4, sm: 8 } }}>
           <Typography
             variant="h4"
             component="h2"
-            sx={{ mb: 4, fontWeight: 600, color: "primary.main" }}
+            sx={{
+              mb: { xs: 2, sm: 4 },
+              fontWeight: 600,
+              color: "primary.main",
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "2.25rem" },
+            }}
           >
             {selectedCategory === "all"
-              ? t("home.featuredProperties")
-              : t(`categories.${selectedCategory}`) +
-                " " +
-                t("home.properties")}
+              ? "Featured Properties"
+              : `${
+                  categories.find((c) => c.id === selectedCategory)?.label || ""
+                } Properties`}
           </Typography>
           <PropertyGrid properties={filteredProperties} loading={loading} />
         </Box>
 
         {/* Featured Destinations */}
-        <Box sx={{ mb: 8 }}>
+        <Box sx={{ mb: { xs: 4, sm: 8 } }}>
           <Typography
             variant="h4"
             component="h2"
-            sx={{ mb: 4, fontWeight: 600, color: "primary.main" }}
+            sx={{
+              mb: { xs: 2, sm: 4 },
+              fontWeight: 600,
+              color: "primary.main",
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "2.25rem" },
+            }}
           >
-            {t("home.featuredDestinations")}
+            Featured Destinations
           </Typography>
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             {destinations.map((destination) => (
               <Grid item xs={12} sm={6} md={3} key={destination.name}>
                 <Card
                   sx={{
-                    borderRadius: 4,
+                    borderRadius: { xs: 3, sm: 4 },
                     overflow: "hidden",
                     boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
                     cursor: "pointer",
@@ -351,16 +416,25 @@ function Home() {
                 >
                   <CardMedia
                     component="img"
-                    height="240"
+                    height={{ xs: 180, sm: 200, md: 240 }}
                     image={destination.image}
                     alt={destination.name}
                   />
                   <CardContent>
-                    <Typography variant="h6" component="div" gutterBottom>
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      gutterBottom
+                      sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }}
+                    >
                       {destination.name}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {destination.properties} {t("home.properties")}
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                    >
+                      {destination.properties} properties
                     </Typography>
                   </CardContent>
                 </Card>
@@ -372,9 +446,9 @@ function Home() {
         {/* Become a Host Banner */}
         <Box
           sx={{
-            mb: 8,
-            p: { xs: 4, md: 6 },
-            borderRadius: 4,
+            mb: { xs: 4, sm: 8 },
+            p: { xs: 3, sm: 4, md: 6 },
+            borderRadius: { xs: 3, sm: 4 },
             backgroundImage: "linear-gradient(to right, #FF385C, #FF5A5F)",
             color: "white",
             textAlign: "center",
@@ -383,34 +457,43 @@ function Home() {
           <Typography
             variant="h4"
             component="h2"
-            sx={{ mb: 2, fontWeight: 600 }}
+            sx={{
+              mb: { xs: 1, sm: 2 },
+              fontWeight: 600,
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "2.25rem" },
+            }}
           >
-            {t("home.becomeHostTitle")}
+            Become a Host
           </Typography>
           <Typography
             variant="body1"
-            sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}
+            sx={{
+              mb: { xs: 3, sm: 4 },
+              maxWidth: "800px",
+              mx: "auto",
+              fontSize: { xs: "0.875rem", sm: "1rem" },
+            }}
           >
-            {t("home.becomeHostDescription")}
+            Earn extra income and unlock new opportunities by sharing your space
           </Typography>
           <Button
             variant="contained"
-            size="large"
+            size={isSmall ? "medium" : "large"}
             sx={{
               bgcolor: "white",
               color: "#FF385C",
               "&:hover": {
                 bgcolor: "rgba(255,255,255,0.9)",
               },
-              px: 4,
-              py: 1.5,
+              px: { xs: 3, sm: 4 },
+              py: { xs: 1, sm: 1.5 },
               borderRadius: 2,
               textTransform: "none",
               fontWeight: 600,
             }}
             onClick={() => navigate("/become-host")}
           >
-            {t("home.learnMore")}
+            Learn More
           </Button>
         </Box>
       </Container>

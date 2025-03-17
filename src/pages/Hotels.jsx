@@ -15,10 +15,17 @@ import {
   Rating,
   CardMedia,
   Alert,
+  Drawer,
+  IconButton,
+  Button,
+  Divider,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { properties } from "../data/properties";
 import Footer from "../components/Footer";
+import { FilterList, Close } from "@mui/icons-material";
 
 // Map category IDs to property amenities for filtering
 const categoryToPropertyMap = {
@@ -37,6 +44,9 @@ function Hotels() {
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const amenitiesList = [
     "Pool",
@@ -58,6 +68,10 @@ function Hotels() {
       : [...selectedAmenities, amenity];
     setSelectedAmenities(newSelectedAmenities);
     filterHotels(priceRange, newSelectedAmenities);
+  };
+
+  const toggleMobileFilters = () => {
+    setMobileFiltersOpen(!mobileFiltersOpen);
   };
 
   const filterHotels = (price, amenities) => {
@@ -132,78 +146,112 @@ function Hotels() {
     }
 
     setLoading(false);
-  }, [searchParams]);
+  }, [searchParams, filterHotels]);
+
+  // Filters component to reuse in both desktop sidebar and mobile drawer
+  const FiltersContent = () => (
+    <>
+      <Typography variant="h6" gutterBottom>
+        Filters
+      </Typography>
+
+      <Box sx={{ mb: 4 }}>
+        <Typography gutterBottom>Price Range</Typography>
+        <Slider
+          value={priceRange}
+          onChange={handlePriceChange}
+          valueLabelDisplay="auto"
+          min={0}
+          max={2000}
+          sx={{ mt: 2 }}
+        />
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography variant="body2">${priceRange[0]}</Typography>
+          <Typography variant="body2">${priceRange[1]}</Typography>
+        </Box>
+      </Box>
+
+      <Box>
+        <Typography gutterBottom>Amenities</Typography>
+        <FormGroup>
+          {amenitiesList.map((amenity) => (
+            <FormControlLabel
+              key={amenity}
+              control={
+                <Checkbox
+                  checked={selectedAmenities.includes(amenity)}
+                  onChange={() => handleAmenityChange(amenity)}
+                />
+              }
+              label={amenity}
+            />
+          ))}
+        </FormGroup>
+      </Box>
+    </>
+  );
 
   return (
     <>
-      <Container maxWidth={false} sx={{ py: 4 }}>
+      <Container maxWidth={false} sx={{ py: { xs: 2, sm: 4 } }}>
         {/* Search results header */}
-        {searchParams.get("location") && (
-          <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
-            Hotels in {searchParams.get("location")}
-          </Typography>
-        )}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+            flexWrap: "wrap",
+            gap: 1,
+          }}
+        >
+          <Box>
+            {searchParams.get("location") && (
+              <Typography variant={isMobile ? "h5" : "h4"} gutterBottom>
+                Hotels in {searchParams.get("location")}
+              </Typography>
+            )}
 
-        {searchParams.get("search") && (
-          <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
-            Search results for "{searchParams.get("search")}"
-          </Typography>
-        )}
+            {searchParams.get("search") && (
+              <Typography variant={isMobile ? "h5" : "h4"} gutterBottom>
+                Search results for "{searchParams.get("search")}"
+              </Typography>
+            )}
 
-        {searchParams.get("category") && (
-          <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
-            {searchParams.get("category").charAt(0).toUpperCase() +
-              searchParams.get("category").slice(1)}{" "}
-            Properties
-          </Typography>
-        )}
+            {searchParams.get("category") && (
+              <Typography variant={isMobile ? "h5" : "h4"} gutterBottom>
+                {searchParams.get("category").charAt(0).toUpperCase() +
+                  searchParams.get("category").slice(1)}{" "}
+                Properties
+              </Typography>
+            )}
+          </Box>
+
+          {/* Mobile filter button */}
+          {isMobile && (
+            <Button
+              variant="outlined"
+              startIcon={<FilterList />}
+              onClick={toggleMobileFilters}
+              sx={{ height: 40 }}
+            >
+              Filters
+            </Button>
+          )}
+        </Box>
 
         <Grid container spacing={3}>
-          {/* Filters */}
-          <Grid item xs={12} md={3}>
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Filters
-              </Typography>
-
-              <Box sx={{ mb: 4 }}>
-                <Typography gutterBottom>Price Range</Typography>
-                <Slider
-                  value={priceRange}
-                  onChange={handlePriceChange}
-                  valueLabelDisplay="auto"
-                  min={0}
-                  max={2000}
-                  sx={{ mt: 2 }}
-                />
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography variant="body2">${priceRange[0]}</Typography>
-                  <Typography variant="body2">${priceRange[1]}</Typography>
-                </Box>
-              </Box>
-
-              <Box>
-                <Typography gutterBottom>Amenities</Typography>
-                <FormGroup>
-                  {amenitiesList.map((amenity) => (
-                    <FormControlLabel
-                      key={amenity}
-                      control={
-                        <Checkbox
-                          checked={selectedAmenities.includes(amenity)}
-                          onChange={() => handleAmenityChange(amenity)}
-                        />
-                      }
-                      label={amenity}
-                    />
-                  ))}
-                </FormGroup>
-              </Box>
-            </Paper>
-          </Grid>
+          {/* Filters - Desktop */}
+          {!isMobile && (
+            <Grid item xs={12} md={3}>
+              <Paper sx={{ p: 3, position: "sticky", top: 80 }}>
+                <FiltersContent />
+              </Paper>
+            </Grid>
+          )}
 
           {/* Hotel Listings */}
-          <Grid item xs={12} md={9}>
+          <Grid item xs={12} md={isMobile ? 12 : 9}>
             {loading ? (
               <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
                 <Typography>Loading...</Typography>
@@ -214,7 +262,7 @@ function Hotels() {
                 filters.
               </Alert>
             ) : (
-              <Grid container spacing={3}>
+              <Grid container spacing={{ xs: 2, sm: 3 }}>
                 {hotels.map((hotel) => (
                   <Grid item key={hotel.id} xs={12} sm={6} lg={4}>
                     <Link
@@ -228,22 +276,29 @@ function Hotels() {
                           "&:hover": {
                             transform: "scale(1.02)",
                           },
+                          borderRadius: { xs: "12px", sm: "16px" },
                         }}
                       >
                         <CardMedia
                           component="img"
-                          height="200"
+                          height={{ xs: 180, sm: 200 }}
                           image={hotel.images[0]}
                           alt={hotel.name}
                         />
                         <CardContent>
-                          <Typography gutterBottom variant="h6" component="div">
+                          <Typography
+                            gutterBottom
+                            variant="h6"
+                            component="div"
+                            sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }}
+                          >
                             {hotel.name}
                           </Typography>
                           <Typography
                             variant="body2"
                             color="text.secondary"
                             gutterBottom
+                            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                           >
                             {hotel.location.city}, {hotel.location.country}
                           </Typography>
@@ -261,16 +316,27 @@ function Hotels() {
                               readOnly
                               size="small"
                             />
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{
+                                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                              }}
+                            >
                               ({hotel.reviews})
                             </Typography>
                           </Box>
-                          <Typography variant="h6" color="primary">
+                          <Typography
+                            variant="h6"
+                            color="primary"
+                            sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+                          >
                             ${hotel.price.base}{" "}
                             <Typography
                               component="span"
                               variant="body2"
                               color="text.secondary"
+                              sx={{ fontSize: { xs: "0.7rem", sm: "0.75rem" } }}
                             >
                               / night
                             </Typography>
@@ -285,6 +351,47 @@ function Hotels() {
           </Grid>
         </Grid>
       </Container>
+
+      {/* Mobile Filters Drawer */}
+      <Drawer
+        anchor="bottom"
+        open={mobileFiltersOpen}
+        onClose={toggleMobileFilters}
+        PaperProps={{
+          sx: {
+            maxHeight: "80vh",
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            px: 2,
+            pb: 2,
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            pt: 2,
+            pb: 1,
+          }}
+        >
+          <Typography variant="h6">Filters</Typography>
+          <IconButton onClick={toggleMobileFilters}>
+            <Close />
+          </IconButton>
+        </Box>
+        <Divider sx={{ mb: 2 }} />
+        <Box sx={{ overflow: "auto" }}>
+          <FiltersContent />
+        </Box>
+        <Box sx={{ mt: 3 }}>
+          <Button variant="contained" fullWidth onClick={toggleMobileFilters}>
+            Apply
+          </Button>
+        </Box>
+      </Drawer>
+
       <Footer />
     </>
   );

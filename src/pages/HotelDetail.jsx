@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import {
   Grid,
   Typography,
@@ -30,6 +29,7 @@ import {
   MenuItem,
   Select,
   FormControl,
+  Link,
 } from "@mui/material";
 import {
   Pool,
@@ -59,10 +59,8 @@ import {
   Facebook,
   Twitter,
   Pinterest,
-  Language,
 } from "@mui/icons-material";
 import { getPropertyById } from "../data/properties";
-import LanguageSelector from "../components/LanguageSelector";
 
 const amenityIcons = {
   wifi: <Wifi sx={{ color: "booking.main" }} />,
@@ -179,44 +177,42 @@ const similarProperties = [
   },
 ];
 
+// Temporary function to replace i18n t function
+const t = (key) => {
+  // Extract the last part of the key after the dot
+  const parts = key.split(".");
+  const lastPart = parts[parts.length - 1];
+
+  // Convert camelCase to Title Case with spaces
+  return lastPart
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim();
+};
+
 function HotelDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
   const [selectedImage, setSelectedImage] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   // Get hotel data based on id
   const hotel = getPropertyById(id);
 
-  // Load saved language preference when component mounts
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem("preferredLanguage");
-    if (savedLanguage && i18n.language !== savedLanguage) {
-      i18n.changeLanguage(savedLanguage);
-    }
-  }, [i18n]);
-
   if (!hotel) {
     return (
-      <Box
-        sx={{
-          minHeight: "60vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Typography variant="h5" color="text.secondary">
-          {t("common.notFound")}
+      <Box sx={{ display: "flex", justifyContent: "center", p: 5 }}>
+        <Typography variant="h5" color="error">
+          Property not found
         </Typography>
       </Box>
     );
   }
 
   const handleBooking = () => {
-    navigate(`/booking/${id}`);
+    navigate(`/booking/${hotel.id}`);
   };
 
   const handleGalleryOpen = () => {
@@ -225,6 +221,24 @@ function HotelDetail() {
 
   const handleGalleryClose = () => {
     setIsGalleryOpen(false);
+  };
+
+  const handleShareClick = () => {
+    // Implement share functionality
+    console.log("Share clicked");
+  };
+
+  const _toggleWishlist = () => {
+    setIsFavorite(!isFavorite);
+  };
+
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
+  const handleShowAllPhotos = () => {
+    // Implement the logic to show all photos
+    handleGalleryOpen();
   };
 
   const handlePrevImage = () => {
@@ -237,6 +251,10 @@ function HotelDetail() {
     setSelectedImage((prev) =>
       prev === hotel.images.length - 1 ? 0 : prev + 1
     );
+  };
+
+  const handleShowAllReviews = () => {
+    // Implement the logic to show all reviews
   };
 
   return (
@@ -273,7 +291,6 @@ function HotelDetail() {
             >
               {hotel.name}
             </Typography>
-            <LanguageSelector />
           </Box>
           <Box
             sx={{
@@ -301,7 +318,7 @@ function HotelDetail() {
                   color: "text.primary",
                 }}
               >
-                {hotel.reviews} {t("common.reviews")}
+                {hotel.reviews} reviews
               </Typography>
               <Typography
                 variant="body2"
@@ -315,21 +332,26 @@ function HotelDetail() {
               </Typography>
             </Box>
             <Box sx={{ display: "flex", gap: 2 }}>
-              <Button
-                startIcon={<Share />}
-                sx={{ textTransform: "none", color: "booking.dark" }}
+              <IconButton
+                aria-label="share"
+                onClick={handleShareClick}
+                sx={{ color: "text.secondary" }}
               >
-                {t("common.share")}
-              </Button>
-              <Button
-                startIcon={
-                  isFavorite ? <Favorite color="error" /> : <FavoriteBorder />
-                }
-                onClick={() => setIsFavorite(!isFavorite)}
-                sx={{ textTransform: "none", color: "booking.dark" }}
+                <Share />
+                <Typography variant="body2" sx={{ ml: 1 }}>
+                  Share
+                </Typography>
+              </IconButton>
+              <IconButton
+                aria-label="save"
+                onClick={_toggleWishlist}
+                sx={{ color: isFavorite ? "error.main" : "text.secondary" }}
               >
-                {t("common.save")}
-              </Button>
+                {isFavorite ? <Favorite color="error" /> : <FavoriteBorder />}
+                <Typography variant="body2" sx={{ ml: 1 }}>
+                  Save
+                </Typography>
+              </IconButton>
             </Box>
           </Box>
         </Box>
@@ -389,24 +411,17 @@ function HotelDetail() {
             </Box>
           ))}
           <Button
-            variant="contained"
-            onClick={handleGalleryOpen}
+            variant="outlined"
+            color="primary"
+            onClick={handleShowAllPhotos}
             sx={{
               position: "absolute",
-              right: 24,
-              bottom: 24,
-              bgcolor: "background.paper",
-              color: "booking.dark",
-              textTransform: "none",
-              fontWeight: "600",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-              "&:hover": {
-                bgcolor: "background.paper",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-              },
+              bottom: 16,
+              right: 16,
+              backgroundColor: "white",
             }}
           >
-            {t("common.showAllPhotos")}
+            Show all photos
           </Button>
         </Box>
 
@@ -421,22 +436,16 @@ function HotelDetail() {
                 sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}
               >
                 <Box>
-                  <Typography
-                    variant="h4"
-                    sx={{ fontWeight: "600", mb: 1, color: "booking.main" }}
-                  >
-                    {t(`propertyTypes.${hotel.type}`)} {t("common.hostedBy")}{" "}
-                    John Doe
+                  <Typography variant="h5" gutterBottom>
+                    {hotel.type.charAt(0).toUpperCase() + hotel.type.slice(1)}{" "}
+                    hosted by {hotel.host ? hotel.host.name : "Host"}
                   </Typography>
                   <Typography
-                    sx={{
-                      color: "text.primary",
-                      fontSize: "1.1rem",
-                      fontWeight: "500",
-                    }}
+                    variant="body1"
+                    color="text.secondary"
+                    gutterBottom
                   >
-                    8 {t("common.guests")} · 4 {t("common.bedrooms")} · 6{" "}
-                    {t("common.beds")} · 3 {t("common.baths")}
+                    8 guests · 4 bedrooms · 6 beds · 3 baths
                   </Typography>
                 </Box>
                 <Avatar sx={{ width: 56, height: 56, bgcolor: "booking.main" }}>
@@ -452,10 +461,11 @@ function HotelDetail() {
                       variant="subtitle2"
                       sx={{ fontWeight: "600", color: "booking.dark" }}
                     >
-                      {t("common.superhost")}
+                      Superhost
                     </Typography>
                     <Typography variant="body2" color="text.primary">
-                      {t("common.superhostDesc")}
+                      Experienced, highly rated host committed to providing
+                      great stays
                     </Typography>
                   </Box>
                 </Box>
@@ -466,10 +476,10 @@ function HotelDetail() {
                       variant="subtitle2"
                       sx={{ fontWeight: "600", color: "booking.dark" }}
                     >
-                      {t("common.greatLocation")}
+                      Great Location
                     </Typography>
                     <Typography variant="body2" color="text.primary">
-                      95% {t("common.recentGuestsRated")}
+                      95% of recent guests rated the location 5-star
                     </Typography>
                   </Box>
                 </Box>
@@ -491,16 +501,14 @@ function HotelDetail() {
               >
                 {hotel.description}
               </Typography>
-              <Button
-                variant="text"
-                sx={{
-                  textTransform: "none",
-                  fontWeight: "500",
-                  color: "booking.main",
-                }}
+              <Typography
+                variant="body2"
+                color="primary"
+                sx={{ cursor: "pointer", mt: 1 }}
+                onClick={toggleDescription}
               >
-                {t("common.showMore")} →
-              </Button>
+                Show more →
+              </Typography>
             </Box>
 
             <Box
@@ -510,7 +518,7 @@ function HotelDetail() {
                 variant="h5"
                 sx={{ fontWeight: "600", mb: 4, color: "booking.dark" }}
               >
-                {t("common.whatThisPlaceOffers")}
+                What this place offers
               </Typography>
               <Grid container spacing={2}>
                 {hotel.amenities.map((amenity) => (
@@ -1045,14 +1053,11 @@ function HotelDetail() {
 
           <Button
             variant="outlined"
-            color="booking"
-            sx={{
-              mt: 2,
-              textTransform: "none",
-              fontWeight: "500",
-            }}
+            color="primary"
+            onClick={handleShowAllReviews}
+            sx={{ mt: 2 }}
           >
-            {t("common.showAllReviews")} ({hotel.reviews})
+            Show all reviews ({hotel.reviews})
           </Button>
         </Box>
 
